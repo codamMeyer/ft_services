@@ -3,15 +3,21 @@ TEST_NAME=$(PHILO)_test
 CC=gcc
 CFLAGS= -O3 -Wall -Wextra -Werror
 TEST_CFLAGS=-ggdb3 $(CFLAGS)
-INC_PATH=-I./
+INC_PATH=-I./inc
 LDFLAGS=-lpthread
 
-PHILO_SRC=
+PHILO_INCS=			\
+	inc/parser.h	\
+	inc/types.h		\
 
-TEST_FILES=									\
-	test/main.c 							\
+PHILO_SRCS=			\
+	parser/parser.c	\
 
-PHILO_OBJS = $(PHILO_SRC:.c=.o)
+TEST_FILES=					\
+	tests/parser_test.c 	\
+	tests/main.c 			\
+
+PHILO_OBJS=$(PHILO_SRCS:.c=.o)
 
 all: $(PHILO)
 
@@ -21,17 +27,17 @@ $(PHILO): $(PHILO_OBJS)
 ciexample:
 	@echo "Just testing"
 
-%.o: %.c 
-	$(CC) $(CFLAGS) $(INC_PATH) -c -o $@ $< 
+%.o: %.c $(PHILO_INCS)
+	$(CC) $(CFLAGS) $(INC_PATH) -c -o $@ $<
 
 test_run: test
 	./$(TEST_NAME)
-	../run_norminette.sh $(PHILO)
+	../run_norminette.sh ../philo_one
 
 # test_integration: $(FT_PRINTF) $(PUSH_SWAP) $(CHECKER)
 # 	./test/integration_test.py
 
-test: $(PHILO) $(TEST_FILES)
+test: $(PHILO_OBJS) $(TEST_FILES)
 	$(CC) $(TEST_CFLAGS) $(INC_PATH) $(PHILO_OBJS) $(TEST_FILES) -o $(TEST_NAME) $(LDFLAGS)
 
 clean:

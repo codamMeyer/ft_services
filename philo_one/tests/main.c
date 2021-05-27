@@ -6,6 +6,6 @@
 
 int main(int argc, const char *argv[])
 {
-	printf("\n\n");
+	printf("\nTesting Philo One\n");
 	return ctest_main(argc, argv);
 }

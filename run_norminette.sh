@@ -4,7 +4,7 @@ SUCCESS_COLOR="\033[01;32m"
 ERROR_COLOR="\033[01;31m"
 NORMAL_COLOR="\033[0m"
 
-norminette > norminette_result
+norminette $1.c $1.h > norminette_result
 
 NORM_ERROR=$(grep -c 'Error!' norminette_result)
 
