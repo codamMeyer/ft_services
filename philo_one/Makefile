@@ -28,7 +28,7 @@ ciexample:
 	@echo "Just testing"
 
 %.o: %.c $(PHILO_INCS)
-	$(CC) $(CFLAGS) $(INC_PATH) -c -o $@ $<
+	@$(CC) $(CFLAGS) $(INC_PATH) -c -o $@ $<
 
 test_run: test
 	./$(TEST_NAME)

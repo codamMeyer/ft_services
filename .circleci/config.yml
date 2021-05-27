@@ -13,5 +13,9 @@ jobs:
           name: Install dependencies Python
           command: 'pip3 install -U pip && pip3 install -U setuptools && pip3 install -U norminette'
       - run:
-          name: Build
-          command: 'cd philo_one && make ciexample'
+          name: Build Philo_one
+          command: 'cd philo_one && make'
+      - run:
+          name: Unit-Test Philo_one
+          command: 'cd philo_one && make test_run'
+          
