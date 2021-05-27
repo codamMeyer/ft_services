@@ -18,8 +18,11 @@ all: $(PHILO)
 $(PHILO): $(PHILO_OBJS)
 		$(CC) $(CFLAGS) $(INC_PATH) main.c -o $@ $^ $(LDFLAGS)
 
+ciexample:
+	@echo "Just testing"
+
 %.o: %.c 
-		$(CC) $(CFLAGS) $(INC_PATH) -c -o $@ $< 
+	$(CC) $(CFLAGS) $(INC_PATH) -c -o $@ $< 
 
 test_run: test
 	./$(TEST_NAME)

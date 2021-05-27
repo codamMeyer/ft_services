@@ -14,13 +14,4 @@ jobs:
           command: 'pip3 install -U pip && pip3 install -U setuptools && pip3 install -U norminette'
       - run:
           name: Build
-          command: ''
-      - run:
-          name: Unit Test
-          command: ''
-      - run:
-          name: Integration Test
-          command: ''
-      - run:
-          name: Norminette
-          command: './run_norminette.sh'
+          command: 'cd philo_one && make ciexample'
