@@ -42,7 +42,7 @@ static void	set_config(const char *str_arg[],
 
 	arg = parse_number(str_arg[option]);
 	if (option == NUM_PHILO)
-		configuration->config.number_of_philosophers.value = arg.value;
+		configuration->config.number_of_philosophers = arg.value;
 	if (option == DIE)
 		configuration->config.time_to_die.value = arg.value;
 	if (option == EAT)
@@ -50,7 +50,7 @@ static void	set_config(const char *str_arg[],
 	if (option == SLEEP)
 		configuration->config.time_to_sleep.value = arg.value;
 	if (option == MIN_MEALS)
-		configuration->config.min_meals.value = arg.value;
+		configuration->config.min_meals = arg.value;
 	configuration->initialized &= arg.initialized;
 }
 
@@ -68,5 +68,7 @@ t_optional_philo_config	parse_config_args(int argc, const char *argv[])
 	set_config(argv, SLEEP, &optional);
 	if (argc == 6)
 		set_config(argv, MIN_MEALS, &optional);
+	else
+		optional.config.min_meals = NOT_SET;
 	return (optional);
 }

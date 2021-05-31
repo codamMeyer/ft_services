@@ -1,17 +1,23 @@
 PHILO=philo_one
 TEST_NAME=$(PHILO)_test
 CC=gcc
-CFLAGS= -O3 -Wall -Wextra -Werror
-TEST_CFLAGS=-ggdb3 $(CFLAGS)
-INC_PATH=-I./inc
+CFLAGS=-ggdb3 -Wall -Wextra -Werror
+TEST_CFLAGS=$(CFLAGS)
+INC_PATH=-I./src
 LDFLAGS=-lpthread
 
-PHILO_INCS=			\
-	inc/parser.h	\
-	inc/types.h		\
+PHILO_INCS=					\
+	src/parser.h			\
+	src/types.h				\
+	src/philosopher.h		\
+	src/fork.h				\
+	src/actions.h			\
 
-PHILO_SRCS=			\
-	parser/parser.c	\
+PHILO_SRCS=					\
+	src/parser.c			\
+	src/philosopher.c		\
+	src/fork.c				\
+	src/actions.c			\
 
 TEST_FILES=					\
 	tests/parser_test.c 	\
@@ -32,7 +38,7 @@ ciexample:
 
 test_run: test
 	./$(TEST_NAME)
-	../run_norminette.sh ../philo_one
+	../run_norminette.sh
 
 # test_integration: $(FT_PRINTF) $(PUSH_SWAP) $(CHECKER)
 # 	./test/integration_test.py
