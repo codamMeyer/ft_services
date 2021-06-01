@@ -1,6 +1,7 @@
 #include <parser.h>
 #include <limits.h>
 #include <stdio.h>
+#include <sys/time.h>
 
 static t_bool	ft_isdigit(char c)
 {
@@ -70,5 +71,6 @@ t_optional_philo_config	parse_config_args(int argc, const char *argv[])
 		set_config(argv, MIN_MEALS, &optional);
 	else
 		optional.config.min_meals = NOT_SET;
+	gettimeofday(&optional.config.time_start, NULL);
 	return (optional);
 }

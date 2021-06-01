@@ -1,5 +1,5 @@
 #ifndef ACTIONS_H
-#define ACTIONS_H
+# define ACTIONS_H
 
 typedef enum e_action
 {
@@ -8,8 +8,8 @@ typedef enum e_action
 	THINKING = 2,
 	HAS_FORKS = 3,
 	DONE_EATING = 4
-} t_action;
+}	t_action;
 
-void print_action(long int time, int philo_id, t_action action);
+void	print_action(long int time, int philo_id, t_action action);
 
 #endif
