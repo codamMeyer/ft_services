@@ -7,10 +7,11 @@
 #include <pthread.h>
 #include <unistd.h>
 
-void destroy_mutexes(t_philo *philosophers, int num_philosophers)
+void destroy_mutexes(t_philo *philosophers, int num_philosophers, pthread_mutex_t *print_action)
 {
     for (int i = 0; i < num_philosophers; ++i)
         pthread_mutex_destroy(philosophers[i].forks.right);
+    pthread_mutex_destroy(print_action);
 }
 
 void join_threads(t_philo *philosophers, int num_philosophers)
@@ -22,19 +23,20 @@ void join_threads(t_philo *philosophers, int num_philosophers)
 t_status run(const t_philo_config *config)
 {
     pthread_mutex_t print_action;
+    pthread_mutex_t *forks = create_forks(config->number_of_philosophers);
+    t_philo *philosophers = create_philosophers(config->number_of_philosophers, forks, &print_action);
+    t_dinner_rules dinner_rules;
+    dinner_rules.config = config;
+
     if (pthread_mutex_init(&print_action, NULL))
     {
         printf("\n mutex init failed\n");
         return ERROR;
     }
-    pthread_mutex_t *forks = create_forks(config->number_of_philosophers);
-    t_philo *philosophers = create_philosophers(config->number_of_philosophers, forks, &print_action);
 
-    create_philosophers_threads(philosophers, config->number_of_philosophers);
-
+    create_philosophers_threads(philosophers, &dinner_rules);
     join_threads(philosophers, config->number_of_philosophers);
-    destroy_mutexes(philosophers,config->number_of_philosophers);
-    
+    destroy_mutexes(philosophers, config->number_of_philosophers, &print_action);
     free(forks);
     free(philosophers);
     return (OK);
@@ -51,5 +53,6 @@ int main(int argc, const char *argv[])
         return (1);
     }
     ret = run(&optional_config.config);
+    printf("DINNER IS OVER\n");
     return (ret);
 }

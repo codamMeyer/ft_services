@@ -60,8 +60,9 @@ void *eat(void *philo)
 }
 
 
-t_status create_philosophers_threads(t_philo *philosophers, int num_philosophers)
+t_status create_philosophers_threads(t_philo *philosophers, t_dinner_rules *dinner_rules)
 {
+    const int num_philosophers = dinner_rules->config->number_of_philosophers;
     int ret;
 
     for (int i = 0; i < num_philosophers; ++i)
