@@ -19,6 +19,7 @@ typedef struct s_philo
     pthread_t thread_id;
     t_forks_pair forks;
     pthread_mutex_t *print_action;
+    const t_philo_config *config;
 } t_philo;
 
 typedef struct s_dinner_rules
@@ -27,8 +28,8 @@ typedef struct s_dinner_rules
     const t_philo_config *config;
 }   t_dinner_rules;
 
-t_philo *create_philosophers(int num_philosophers, pthread_mutex_t *forks, pthread_mutex_t *print_action);
+t_philo *create_philosophers(const t_philo_config *philo_config, pthread_mutex_t *forks, pthread_mutex_t *print_action);
 void *start_dinner(void *dinner_rules);
-t_status create_philosophers_threads(t_philo *philosophers, t_dinner_rules *dinner_rules);
+t_status create_philosophers_threads(t_philo *philosophers);
 
 #endif

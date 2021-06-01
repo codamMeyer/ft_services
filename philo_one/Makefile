@@ -1,7 +1,7 @@
 PHILO=philo_one
 TEST_NAME=$(PHILO)_test
 CC=gcc
-CFLAGS=-ggdb3 -Wall -Wextra -Werror
+CFLAGS=-ggdb3 -Wall -Wextra -Werror #-fsanitize=thread
 TEST_CFLAGS=$(CFLAGS)
 INC_PATH=-I./src
 LDFLAGS=-lpthread
@@ -28,7 +28,7 @@ PHILO_OBJS=$(PHILO_SRCS:.c=.o)
 all: $(PHILO)
 
 $(PHILO): $(PHILO_OBJS)
-		$(CC) $(CFLAGS) $(INC_PATH) main.c -o $@ $^ $(LDFLAGS)
+		$(CC) $(CFLAGS) $(INC_PATH) main.c  -o $@ $^ $(LDFLAGS)
 
 ciexample:
 	@echo "Just testing"

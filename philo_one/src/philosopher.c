@@ -3,20 +3,23 @@
 #include <stdio.h>
 #include <actions.h>
 
-t_philo *create_philosophers(int num_philosophers, pthread_mutex_t *forks, pthread_mutex_t *print_action)
+t_philo *create_philosophers(const t_philo_config *config, pthread_mutex_t *forks, pthread_mutex_t *print_action)
 {
+    const int num_philosophers = config->number_of_philosophers;
     t_philo *philosophers = malloc(sizeof(t_philo) *num_philosophers);
 
     philosophers[0].id = 1;
     philosophers[0].forks.right = &forks[0];
     philosophers[0].forks.left = &forks[num_philosophers - 1];
     philosophers[0].print_action = print_action;
+    philosophers[0].config = config;
     for (int i = 1; i < num_philosophers; ++i)
     {
         philosophers[i].id = i + 1;
         philosophers[i].forks.right = &forks[i];
         philosophers[i].forks.left = &forks[i - 1];
         philosophers[i].print_action = print_action;
+        philosophers[i].config = config;
     }
     return (philosophers);
 }
@@ -27,25 +30,23 @@ void drop_forks(t_forks_pair *forks)
     pthread_mutex_unlock(forks->right);
 }
 
-t_bool get_forks(t_forks_pair *forks)
+void get_forks(t_philo *philo)
 {
-    const t_bool has_left_fork = pthread_mutex_lock(forks->left) == 0;
-    const t_bool has_right_fork = pthread_mutex_lock(forks->right) == 0;
-
-    return (has_right_fork && has_left_fork);
+    if (!philo->forks.has_left_fork)
+        philo->forks.has_left_fork = pthread_mutex_lock(philo->forks.left) == 0;
+    if (!philo->forks.has_right_fork)
+        philo->forks.has_right_fork = pthread_mutex_lock(philo->forks.right) == 0;
+    if (philo->forks.has_left_fork && philo->forks.has_right_fork)
+    {
+        pthread_mutex_lock(philo->print_action);
+        print_action(123456, philo->id, HAS_FORKS);
+        pthread_mutex_unlock(philo->print_action);
+    }
 }
 
-void *eat(void *philo)
+void *start_dinner(void *philo)
 {
-    const t_bool has_forks_pair = get_forks(&((t_philo *)philo)->forks);
-
-    if (has_forks_pair)
-    {
-        pthread_mutex_lock(((t_philo *)philo)->print_action);
-        print_action(123456, ((t_philo *)philo)->id, HAS_FORKS);
-        pthread_mutex_unlock(((t_philo *)philo)->print_action);
-    }    
-    
+    get_forks((t_philo *)philo);
     pthread_mutex_lock(((t_philo *)philo)->print_action);
     print_action(123456, ((t_philo *)philo)->id, EATING);
     pthread_mutex_unlock(((t_philo *)philo)->print_action);
@@ -59,15 +60,14 @@ void *eat(void *philo)
     return NULL;
 }
 
-
-t_status create_philosophers_threads(t_philo *philosophers, t_dinner_rules *dinner_rules)
+t_status create_philosophers_threads(t_philo *philosophers)
 {
-    const int num_philosophers = dinner_rules->config->number_of_philosophers;
+    const int num_philosophers = philosophers->config->number_of_philosophers;
     int ret;
 
     for (int i = 0; i < num_philosophers; ++i)
     {
-        ret = pthread_create(&(philosophers[i].thread_id), NULL, &eat, &philosophers[i]);
+        ret = pthread_create(&(philosophers[i].thread_id), NULL, &start_dinner, &philosophers[i]);
         if (ret)
         {
             free(philosophers);

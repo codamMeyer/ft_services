@@ -24,9 +24,7 @@ t_status run(const t_philo_config *config)
 {
     pthread_mutex_t print_action;
     pthread_mutex_t *forks = create_forks(config->number_of_philosophers);
-    t_philo *philosophers = create_philosophers(config->number_of_philosophers, forks, &print_action);
-    t_dinner_rules dinner_rules;
-    dinner_rules.config = config;
+    t_philo *philosophers = create_philosophers(config, forks, &print_action);
 
     if (pthread_mutex_init(&print_action, NULL))
     {
@@ -34,7 +32,7 @@ t_status run(const t_philo_config *config)
         return ERROR;
     }
 
-    create_philosophers_threads(philosophers, &dinner_rules);
+    create_philosophers_threads(philosophers);
     join_threads(philosophers, config->number_of_philosophers);
     destroy_mutexes(philosophers, config->number_of_philosophers, &print_action);
     free(forks);
