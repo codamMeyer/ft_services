@@ -1,20 +1,34 @@
 #include <fork.h>
 #include <stdlib.h>
 
-pthread_mutex_t	*create_forks(int num_forks)
+static void	cleanup_forks(t_fork *forks, int num_forks)
 {
-	pthread_mutex_t	*forks;
+	int i = 0;
+	
+	while (i < num_forks)
+	{
+		free(forks[i].lock);
+		++i;
+	}
+	free(forks);
+}
+
+t_fork	*create_forks(int num_forks)
+{
+	t_fork	*forks;
 	int				i;
 
-	forks = malloc(sizeof(pthread_mutex_t) * num_forks);
+	forks = malloc(sizeof(t_fork) * num_forks);
 	if (!forks)
 		return (NULL);
 	i = 0;
 	while (i < num_forks)
 	{
-		if (pthread_mutex_init(&forks[i], NULL))
+		forks[i].lock = malloc(sizeof(pthread_mutex_t));
+		forks->is_taken = FALSE;
+		if (pthread_mutex_init(forks[i].lock, NULL))
 		{
-			free(forks);
+			cleanup_forks(forks, num_forks);
 			return (NULL);
 		}
 		++i;

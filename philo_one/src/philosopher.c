@@ -6,7 +6,7 @@
 #include <sys/time.h>
 
 t_philo	*create_philosophers(const t_philo_config *config, \
-									pthread_mutex_t *forks, \
+									t_fork *forks, \
 									pthread_mutex_t *print_action)
 {
 	const int	num_philosophers = config->number_of_philosophers;
@@ -33,8 +33,10 @@ t_philo	*create_philosophers(const t_philo_config *config, \
 
 void	drop_forks(t_forks_pair *forks)
 {
-	pthread_mutex_unlock(forks->left);
-	pthread_mutex_unlock(forks->right);
+	pthread_mutex_unlock(forks->left->lock);
+	pthread_mutex_unlock(forks->right->lock);
+	forks->left->is_taken = FALSE;
+	forks->right->is_taken = FALSE;
 }
 
 unsigned long int get_time_diff(const struct timeval	*start)
@@ -47,44 +49,60 @@ unsigned long int get_time_diff(const struct timeval	*start)
 
 void	get_forks(t_philo *philo)
 {
-
-	if (!philo->forks.has_left_fork)
-		philo->forks.has_left_fork = \
-									pthread_mutex_lock(philo->forks.left) == 0;
-	if (!philo->forks.has_right_fork)
-		philo->forks.has_right_fork = \
-									pthread_mutex_lock(philo->forks.right) == 0;
-	if (philo->forks.has_left_fork && philo->forks.has_right_fork)
+	unsigned int cur_time;
+	if (!philo->forks.left->is_taken && !philo->forks.right->is_taken)
 	{
+		philo->forks.left->is_taken = pthread_mutex_lock(philo->forks.left->lock) == 0;
+		philo->forks.right->is_taken = pthread_mutex_lock(philo->forks.right->lock) == 0;
+	}
+	if (philo->forks.left->is_taken && philo->forks.right->is_taken)
+	{
+		cur_time = get_time_diff(&philo->config->time_start);
 		pthread_mutex_lock(philo->print_action);
-		print_action(get_time_diff(&philo->config->time_start), philo->id, HAS_FORKS);
+		print_action(cur_time, philo->id, HAS_FORKS);
 		pthread_mutex_unlock(philo->print_action);
 	}
 }
 
-void	eat(t_philo *philo)
+void	start_to_eat(t_philo *philo)
 {
+	philo->last_meal.value = get_time_diff(&philo->config->time_start);
 	pthread_mutex_lock(philo->print_action);
-	print_action(get_time_diff(&philo->config->time_start), philo->id, EATING);
+	print_action(philo->last_meal.value, philo->id, EATING);
 	pthread_mutex_unlock(philo->print_action);
 	usleep(philo->config->time_to_eat.value * ONE_MILLISEC);
 	drop_forks(&philo->forks);
 }
 
-void	sleep_(t_philo *philo)
+void	start_to_sleep(t_philo *philo)
 {
+	unsigned int cur_time = get_time_diff(&philo->config->time_start); 
 	pthread_mutex_lock(philo->print_action);
-	print_action(get_time_diff(&philo->config->time_start), philo->id, SLEEPING);
+	print_action(cur_time, philo->id, SLEEPING);
 	pthread_mutex_unlock(philo->print_action);
 	usleep(philo->config->time_to_sleep.value * ONE_MILLISEC);
-	drop_forks(&philo->forks);
+}
+
+void	start_to_think(t_philo *philo)
+{
+	unsigned int cur_time = get_time_diff(&philo->config->time_start); 
+	pthread_mutex_lock(philo->print_action);
+	print_action(cur_time, philo->id, THINKING);
+	pthread_mutex_unlock(philo->print_action);
+	usleep(philo->config->time_to_sleep.value * ONE_MILLISEC);
 }
 
 void	*start_dinner(void *philo)
 {
-	get_forks((t_philo *)philo);
-	eat((t_philo *)philo);
-	sleep_((t_philo *)philo);
+	int i = 2;
+	while (i > 0)
+	{
+		get_forks((t_philo *)philo);
+		start_to_eat((t_philo *)philo);
+		start_to_sleep((t_philo *)philo);
+		start_to_think((t_philo *)philo);
+		--i;
+	}
 	return (NULL);
 }
 

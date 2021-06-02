@@ -10,7 +10,7 @@
 void destroy_mutexes(t_philo *philosophers, int num_philosophers, pthread_mutex_t *print_action)
 {
     for (int i = 0; i < num_philosophers; ++i)
-        pthread_mutex_destroy(philosophers[i].forks.right);
+        pthread_mutex_destroy(philosophers[i].forks.right->lock);
     pthread_mutex_destroy(print_action);
 }
 
@@ -23,7 +23,7 @@ void join_threads(t_philo *philosophers, int num_philosophers)
 t_status run(const t_philo_config *config)
 {
     pthread_mutex_t print_action;
-    pthread_mutex_t *forks = create_forks(config->number_of_philosophers);
+    t_fork *forks = create_forks(config->number_of_philosophers);
     t_philo *philosophers = create_philosophers(config, forks, &print_action);
 
     if (pthread_mutex_init(&print_action, NULL))

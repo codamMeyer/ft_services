@@ -4,7 +4,7 @@
 void	print_action(long int time, int philo_id, t_action action)
 {
 	static const char	*action_strings[5] = {
-												"started eating  🍝",
+												"is eating       🍝",
 												"is sleeping     💤",
 												"is thinking     💭",
 												"has two forks   🍴",

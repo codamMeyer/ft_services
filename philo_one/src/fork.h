@@ -1,7 +1,14 @@
 #ifndef FORK_H
 # define FORK_H
 # include <pthread.h>
+# include <types.h>
 
-pthread_mutex_t	*create_forks(int num_forks);
+typedef struct s_fork
+{
+	pthread_mutex_t *lock;
+	t_bool is_taken;
+}t_fork;
+
+t_fork  *create_forks(int num_forks);
 
 #endif

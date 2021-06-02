@@ -2,14 +2,21 @@
 # define PHILOSOPHER_H
 # include <types.h>
 # include <pthread.h>
+# include <fork.h>
 
 typedef struct s_forks_pair
 {
-	pthread_mutex_t	*right;
-	pthread_mutex_t	*left;
-	t_bool			has_left_fork;
-	t_bool			has_right_fork;
+	t_fork *right;
+	t_fork *left;
 }	t_forks_pair;
+
+// typedef struct s_forks_pair
+// {
+// 	pthread_mutex_t	*right;
+// 	pthread_mutex_t	*left;
+// 	t_bool			has_left_fork;
+// 	t_bool			has_right_fork;
+// }	t_forks_pair;
 
 typedef struct s_philo
 {
@@ -29,7 +36,7 @@ typedef struct s_dinner_rules
 }	t_dinner_rules;
 
 t_philo		*create_philosophers(const t_philo_config *philo_config, \
-										pthread_mutex_t *forks, \
+										t_fork *forks, \
 										pthread_mutex_t *print_action);
 void		*start_dinner(void *dinner_rules);
 t_status	create_philosophers_threads(t_philo *philosophers);
