@@ -3,8 +3,9 @@
 
 static void	cleanup_forks(t_fork *forks, int num_forks)
 {
-	int i = 0;
-	
+	int	i;
+
+	i = 0;
 	while (i < num_forks)
 	{
 		free(forks[i].lock);
@@ -16,7 +17,7 @@ static void	cleanup_forks(t_fork *forks, int num_forks)
 t_fork	*create_forks(int num_forks)
 {
 	t_fork	*forks;
-	int				i;
+	int		i;
 
 	forks = malloc(sizeof(t_fork) * num_forks);
 	if (!forks)

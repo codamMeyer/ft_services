@@ -38,7 +38,9 @@ typedef struct s_optional_philo_config
 typedef enum e_status
 {
 	ERROR = -1,
-	OK = 0,
+	DEAD = 0,
+	ALIVE = 1,
+	OK = 2,
 }	t_status;
 
 #endif

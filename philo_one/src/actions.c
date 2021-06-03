@@ -8,7 +8,7 @@ void	print_action(long int time, int philo_id, t_action action)
 												"is sleeping     💤",
 												"is thinking     💭",
 												"has two forks   🍴",
-												"is done eating   ✔️",
+												"is dead         💀",
 										   };
 
 	printf("| %6ldms | philo id %4d | %s |\n", \

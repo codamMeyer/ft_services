@@ -6,17 +6,9 @@
 
 typedef struct s_forks_pair
 {
-	t_fork *right;
-	t_fork *left;
+	t_fork	*right;
+	t_fork	*left;
 }	t_forks_pair;
-
-// typedef struct s_forks_pair
-// {
-// 	pthread_mutex_t	*right;
-// 	pthread_mutex_t	*left;
-// 	t_bool			has_left_fork;
-// 	t_bool			has_right_fork;
-// }	t_forks_pair;
 
 typedef struct s_philo
 {
