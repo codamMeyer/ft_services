@@ -1,7 +1,7 @@
 #include <fork.h>
 #include <stdlib.h>
 
-static void	cleanup_forks(t_fork *forks, int num_forks)
+void	cleanup_forks(t_fork *forks, int num_forks)
 {
 	int	i;
 

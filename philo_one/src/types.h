@@ -29,9 +29,9 @@ typedef struct s_forks_pair
 
 typedef struct s_display
 {
-	pthread_mutex_t *lock;
-	t_bool is_used;
-} t_display;
+	pthread_mutex_t	*lock;
+	t_bool			is_used;
+}	t_display;
 
 typedef struct s_philo_config
 {
@@ -60,13 +60,11 @@ typedef struct s_dinner_rules
 	const t_philo_config	*config;
 }	t_dinner_rules;
 
-
 typedef struct s_optional_int
 {
 	int		value;
 	t_bool	initialized;
 }	t_optional_int;
-
 
 typedef struct s_optional_philo_config
 {

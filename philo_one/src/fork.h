@@ -4,5 +4,5 @@
 # include <types.h>
 
 t_fork	*create_forks(int num_forks);
-
+void	cleanup_forks(t_fork *forks, int num_forks);
 #endif

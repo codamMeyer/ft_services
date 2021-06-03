@@ -66,9 +66,9 @@ void	get_forks(t_philo *philo)
 	}
 }
 
-t_bool is_dead(t_philo *philo)
+t_bool	is_dead(t_philo *philo)
 {
-	unsigned int cur_time = get_cur_time(&philo->config->time_start);
+	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
 
 	if ((cur_time - philo->last_meal.value) > philo->config->time_to_die.value)
 	{
@@ -89,15 +89,18 @@ void	start_to_eat(t_philo *philo)
 t_status	start_to_sleep(t_philo *philo)
 {
 	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
+	const unsigned int	wakeup_time = \
+			philo->last_meal.value + philo->config->time_to_eat.value + \
+			philo->config->time_to_sleep.value ;
+	const unsigned int	will_starve = \
+			philo->last_meal.value + philo->config->time_to_die.value;
+	unsigned int		sleep_and_die_time;
+
 	display_action_message(cur_time, philo, SLEEPING);
-	
-	unsigned int finish_sleep = philo->last_meal.value + philo->config->time_to_eat.value + philo->config->time_to_sleep.value ;
-	unsigned int last_meal_plus_time_to_die = philo->last_meal.value + philo->config->time_to_die.value;
-
-
-	if (finish_sleep > last_meal_plus_time_to_die)
+	if (wakeup_time > will_starve)
 	{
-		unsigned int sleep_and_die_time = philo->config->time_to_sleep.value - ((philo->last_meal.value + philo->config->time_to_eat.value + philo->config->time_to_sleep.value) - philo->config->time_to_sleep.value);
+		sleep_and_die_time = philo->config->time_to_sleep.value - \
+						(wakeup_time - philo->config->time_to_sleep.value);
 		usleep(sleep_and_die_time * ONE_MILLISEC);
 		return (DEAD);
 	}
@@ -115,17 +118,21 @@ void	start_to_think(t_philo *philo)
 
 void	*start_dinner(void *philo)
 {
-	while (!is_dead((t_philo *)philo))
+	unsigned int	cur_time;
+	t_philo			*philosopher;
+
+	philosopher = (t_philo *)philo;
+	while (!is_dead(philosopher))
 	{
-		get_forks((t_philo *)philo);
-		start_to_eat((t_philo *)philo);
-		if (start_to_sleep((t_philo *)philo) == DEAD)
+		get_forks(philosopher);
+		start_to_eat(philosopher);
+		if (start_to_sleep(philosopher) == DEAD)
 		{
-			unsigned int cur_time = get_cur_time(&((t_philo *)philo)->config->time_start);
-			display_action_message(cur_time, ((t_philo *)philo), DIED);
+			cur_time = get_cur_time(&(philosopher)->config->time_start);
+			display_action_message(cur_time, (philosopher), DIED);
 			break ;
 		}
-		start_to_think((t_philo *)philo);
+		start_to_think(philosopher);
 	}
 	return (NULL);
 }
