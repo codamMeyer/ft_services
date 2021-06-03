@@ -7,11 +7,11 @@
 #include <pthread.h>
 #include <unistd.h>
 
-void destroy_mutexes(t_philo *philosophers, int num_philosophers, pthread_mutex_t *print_action)
+void destroy_mutexes(t_philo *philosophers, int num_philosophers, pthread_mutex_t *display_action_message)
 {
     for (int i = 0; i < num_philosophers; ++i)
         pthread_mutex_destroy(philosophers[i].forks.right->lock);
-    pthread_mutex_destroy(print_action);
+    pthread_mutex_destroy(display_action_message);
 }
 
 void join_threads(t_philo *philosophers, int num_philosophers)
@@ -22,19 +22,21 @@ void join_threads(t_philo *philosophers, int num_philosophers)
 
 t_status run(const t_philo_config *config)
 {
-    pthread_mutex_t print_action;
+    t_display display;
     t_fork *forks = create_forks(config->number_of_philosophers);
-    t_philo *philosophers = create_philosophers(config, forks, &print_action);
+    t_philo *philosophers = create_philosophers(config, forks, &display);
 
-    if (pthread_mutex_init(&print_action, NULL))
+    display.lock = malloc(sizeof(pthread_mutex_t));
+    display.is_used = FALSE;
+    if (!display.lock || pthread_mutex_init(display.lock, NULL))
     {
+        //add cleanup func
         printf("\n mutex init failed\n");
         return ERROR;
     }
-
     create_philosophers_threads(philosophers);
     join_threads(philosophers, config->number_of_philosophers);
-    destroy_mutexes(philosophers, config->number_of_philosophers, &print_action);
+    destroy_mutexes(philosophers, config->number_of_philosophers, display.lock);
     free(forks);
     free(philosophers);
     return (OK);

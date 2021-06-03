@@ -11,13 +11,13 @@ PHILO_INCS=					\
 	src/types.h				\
 	src/philosopher.h		\
 	src/fork.h				\
-	src/actions.h			\
+	src/display.h			\
 
 PHILO_SRCS=					\
 	src/parser.c			\
 	src/philosopher.c		\
 	src/fork.c				\
-	src/actions.c			\
+	src/display.c			\
 
 TEST_FILES=					\
 	tests/parser_test.c 	\

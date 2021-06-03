@@ -1,13 +1,13 @@
 #include <philosopher.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <actions.h>
+#include <display.h>
 #include <unistd.h>
 #include <sys/time.h>
 
 t_philo	*create_philosophers(const t_philo_config *config, \
 									t_fork *forks, \
-									pthread_mutex_t *print_action)
+									t_display *display)
 {
 	const int	num_philosophers = config->number_of_philosophers;
 	t_philo		*philosophers;
@@ -24,7 +24,7 @@ t_philo	*create_philosophers(const t_philo_config *config, \
 			philosophers[i].forks.left = &forks[num_philosophers - 1];
 		else
 			philosophers[i].forks.left = &forks[i - 1];
-		philosophers[i].print_action = print_action;
+		philosophers[i].display = display;
 		philosophers[i].config = config;
 		++i;
 	}
@@ -62,9 +62,7 @@ void	get_forks(t_philo *philo)
 	if (philo->forks.left->is_taken && philo->forks.right->is_taken)
 	{
 		cur_time = get_cur_time(&philo->config->time_start);
-		pthread_mutex_lock(philo->print_action);
-		print_action(cur_time, philo->id, HAS_FORKS);
-		pthread_mutex_unlock(philo->print_action);
+		display_action_message(cur_time, philo, HAS_FORKS);
 	}
 }
 
@@ -74,8 +72,6 @@ t_bool is_dead(t_philo *philo)
 
 	if ((cur_time - philo->last_meal.value) > philo->config->time_to_die.value)
 	{
-		// printf("time to die: %ld\n", philo->config->time_to_die.value);
-		// printf("cur time %d last meal: %ld     cur time - last meal: %ld\n", cur_time, philo->last_meal.value, cur_time - philo->last_meal.value);
 		printf("philo %d is dead\n", philo->id);
 		return (TRUE);
 	}
@@ -85,9 +81,7 @@ t_bool is_dead(t_philo *philo)
 void	start_to_eat(t_philo *philo)
 {
 	philo->last_meal.value = get_cur_time(&philo->config->time_start);
-	pthread_mutex_lock(philo->print_action);
-	print_action(philo->last_meal.value, philo->id, EATING);
-	pthread_mutex_unlock(philo->print_action);
+	display_action_message(philo->last_meal.value, philo, EATING);
 	usleep(philo->config->time_to_eat.value * ONE_MILLISEC);
 	drop_forks(&philo->forks);
 }
@@ -95,9 +89,7 @@ void	start_to_eat(t_philo *philo)
 t_status	start_to_sleep(t_philo *philo)
 {
 	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
-	pthread_mutex_lock(philo->print_action);
-	print_action(cur_time, philo->id, SLEEPING);
-	pthread_mutex_unlock(philo->print_action);
+	display_action_message(cur_time, philo, SLEEPING);
 	
 	unsigned int finish_sleep = philo->last_meal.value + philo->config->time_to_eat.value + philo->config->time_to_sleep.value ;
 	unsigned int last_meal_plus_time_to_die = philo->last_meal.value + philo->config->time_to_die.value;
@@ -117,9 +109,7 @@ void	start_to_think(t_philo *philo)
 {
 	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
 
-	pthread_mutex_lock(philo->print_action);
-	print_action(cur_time, philo->id, THINKING);
-	pthread_mutex_unlock(philo->print_action);
+	display_action_message(cur_time, philo, THINKING);
 	usleep(ONE_MILLISEC);
 }
 
@@ -132,9 +122,7 @@ void	*start_dinner(void *philo)
 		if (start_to_sleep((t_philo *)philo) == DEAD)
 		{
 			unsigned int cur_time = get_cur_time(&((t_philo *)philo)->config->time_start);
-			pthread_mutex_lock(((t_philo *)philo)->print_action);
-			print_action(cur_time, ((t_philo *)philo)->id, DIED);
-			pthread_mutex_unlock(((t_philo *)philo)->print_action);
+			display_action_message(cur_time, ((t_philo *)philo), DIED);
 			break ;
 		}
 		start_to_think((t_philo *)philo);
