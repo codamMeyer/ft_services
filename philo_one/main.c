@@ -37,6 +37,8 @@ void	join_threads(t_philo *philosophers, int num_philosophers)
 	}
 }
 
+//  implement the part where it stops after eating N meals
+
 t_status	run(const t_philo_config *config)
 {
 	t_display	display;
@@ -69,7 +71,7 @@ int	main(int argc, const char *argv[])
 
 	if (!optional_config.initialized)
 	{
-		printf("Usage:\n\t./philo_one <number_of_philosophers> \
+		printf("Usage:\t./philo_one <number_of_philosophers> \
 <time_to_die> <time_to_eat> <time_to_sleep> \
 [number_of_times_each_philosopher_must_eat]\n");
 		return (1);

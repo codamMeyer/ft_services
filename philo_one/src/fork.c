@@ -26,7 +26,7 @@ t_fork	*create_forks(int num_forks)
 	while (i < num_forks)
 	{
 		forks[i].lock = malloc(sizeof(pthread_mutex_t));
-		forks->is_taken = FALSE;
+		forks[i].is_taken = FALSE;
 		if (pthread_mutex_init(forks[i].lock, NULL))
 		{
 			cleanup_forks(forks, num_forks);

@@ -48,22 +48,20 @@ unsigned long int	get_cur_time(const struct timeval	*start)
 		+ (time_action.tv_usec - start->tv_usec) * 0.001);
 }
 
-void	get_forks(t_philo *philo)
+t_bool	get_forks(t_philo *philo)
 {
-	unsigned int	cur_time;
+	unsigned int	cur_time = get_cur_time(&philo->config->time_start);
 
 	if (!philo->forks.left->is_taken && !philo->forks.right->is_taken)
 	{
-		philo->forks.left->is_taken = \
-			pthread_mutex_lock(philo->forks.left->lock) == 0;
-		philo->forks.right->is_taken = \
-			pthread_mutex_lock(philo->forks.right->lock) == 0;
-	}
-	if (philo->forks.left->is_taken && philo->forks.right->is_taken)
-	{
-		cur_time = get_cur_time(&philo->config->time_start);
+		pthread_mutex_lock(philo->forks.left->lock);
+		pthread_mutex_lock(philo->forks.right->lock);
+		philo->forks.left->is_taken = TRUE;
+		philo->forks.right->is_taken = TRUE;
 		display_action_message(cur_time, philo, HAS_FORKS);
+		return (TRUE);
 	}
+	return (FALSE);
 }
 
 t_bool	is_dead(t_philo *philo)
@@ -72,7 +70,7 @@ t_bool	is_dead(t_philo *philo)
 
 	if ((cur_time - philo->last_meal.value) > philo->config->time_to_die.value)
 	{
-		printf("philo %d is dead\n", philo->id);
+		display_action_message(cur_time, philo, DIED);
 		return (TRUE);
 	}
 	return (FALSE);
@@ -124,15 +122,17 @@ void	*start_dinner(void *philo)
 	philosopher = (t_philo *)philo;
 	while (!is_dead(philosopher))
 	{
-		get_forks(philosopher);
-		start_to_eat(philosopher);
-		if (start_to_sleep(philosopher) == DEAD)
+		if (get_forks(philosopher))
 		{
-			cur_time = get_cur_time(&(philosopher)->config->time_start);
-			display_action_message(cur_time, (philosopher), DIED);
-			break ;
+			start_to_eat(philosopher);
+			if (start_to_sleep(philosopher) == DEAD)
+			{
+				cur_time = get_cur_time(&(philosopher)->config->time_start);
+				display_action_message(cur_time, (philosopher), DIED);
+				break ;
+			}
+			start_to_think(philosopher);
 		}
-		start_to_think(philosopher);
 	}
 	return (NULL);
 }
