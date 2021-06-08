@@ -68,22 +68,22 @@ t_status	run(t_philo_config *config)
 
 int	main(int argc, const char *argv[])
 {
-	t_optional_philo_config	optional_config;
-	t_status						ret;
+	t_optional_philo_config	optional;
+	t_status				ret;
 
-	optional_config = parse_config_args(argc, argv);
-	if (!optional_config.initialized)
+	optional = parse_config_args(argc, argv);
+	if (!optional.initialized)
 	{
 		printf("Usage:\t./philo_one <number_of_philosophers> \
 <time_to_die> <time_to_eat> <time_to_sleep> \
 [number_of_times_each_philosopher_must_eat]\n");
 		return (ERROR);
 	}
-	if (optional_config.config.number_of_philosophers < 2)
+	if (optional.config.number_of_philosophers < 2)
 	{
-		printf("Invalid Number of Philosophers");
+		printf("Invalid Number of Philosophers\n");
 		return (ERROR);
 	}
-	ret = run(&optional_config.config);
+	ret = run(&optional.config);
 	return (ret);
 }

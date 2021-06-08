@@ -2,7 +2,7 @@
 # define TYPES_H
 # define TRUE 1
 # define FALSE 0
-# define NOT_SET -1
+# define NOT_SET 0
 # define ONE_MILLISEC 1000
 # include <stdint.h>
 # include <sys/time.h>
@@ -36,6 +36,7 @@ typedef struct s_display
 typedef struct s_philo_config
 {
 	int				min_meals;
+	int				need_to_finish_meals;
 	int				number_of_philosophers;
 	struct timeval	time_start;
 	t_time_ms		time_to_die;

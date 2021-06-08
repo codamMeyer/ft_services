@@ -24,6 +24,7 @@ t_philo	*create_philosophers(t_philo_config *config, \
 			philosophers[i].forks.left = &forks[num_philosophers - 1];
 		else
 			philosophers[i].forks.left = &forks[i - 1];
+		philosophers[i].meals_counter = 0;
 		philosophers[i].display = display;
 		philosophers[i].config = config;
 		++i;
@@ -84,6 +85,12 @@ void	start_to_eat(t_philo *philo)
 	display_action_message(philo->last_meal.value, philo, EATING);
 	usleep(philo->config->time_to_eat.value * ONE_MILLISEC);
 	drop_forks(&philo->forks);
+	if (philo->config->min_meals)
+	{
+		++(philo->meals_counter);
+		if (philo->meals_counter == philo->config->min_meals)
+			--(philo->config->need_to_finish_meals);
+	}
 }
 
 t_life_status	start_to_sleep(t_philo *philo)
@@ -111,6 +118,15 @@ t_life_status	start_to_sleep(t_philo *philo)
 	return (ALIVE);
 }
 
+t_bool is_dinner_over(t_philo *philo)
+{
+	if (philo->config->min_meals && philo->config->need_to_finish_meals == 0)
+		return (TRUE);
+	if (is_dead(philo) || philo->config->death_event)
+		return (TRUE);
+	return (FALSE);
+}
+
 void	start_to_think(t_philo *philo)
 {
 	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
@@ -125,7 +141,7 @@ void	*start_dinner(void *philo)
 	t_philo			*philosopher;
 
 	philosopher = (t_philo *)philo;
-	while (!is_dead(philosopher) && !philosopher->config->death_event)
+	while (!is_dinner_over(philosopher))
 	{
 		if (get_forks(philosopher))
 		{

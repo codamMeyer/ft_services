@@ -1,7 +1,7 @@
 PHILO=philo_one
 TEST_NAME=$(PHILO)_test
 CC=gcc
-CFLAGS=-ggdb3 -Wall -Wextra -Werror -fsanitize=leak -fsanitize=address
+CFLAGS=-Wall -Wextra -Werror -O3 #-ggdb3 -fsanitize=leak -fsanitize=address
 TEST_CFLAGS=$(CFLAGS)
 INC_PATH=-I./src
 LDFLAGS=-lpthread
@@ -38,11 +38,10 @@ ciexample:
 
 test_run: test
 	./$(TEST_NAME)
-	./tests/integration_test.py
 	@# ../run_norminette.sh
 
-# test_integration: $(FT_PRINTF) $(PUSH_SWAP) $(CHECKER)
-# 	./test/integration_test.py
+test_integration: $(PHILO)
+	./tests/integration_test.py
 
 test: $(PHILO_OBJS) $(TEST_FILES)
 	$(CC) $(TEST_CFLAGS) $(INC_PATH) $(PHILO_OBJS) $(TEST_FILES) -o $(TEST_NAME) $(LDFLAGS)

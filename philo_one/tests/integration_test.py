@@ -54,8 +54,6 @@ class ErrorManagement:
         self._runInput("Less than 5 parameters", "4 20 85")
         self._runInput("More than 6 parameters", "4 20 85 200 80 90")
 
-
-
     def runTests(self):
         printTestBanner("Error management")
         self._testInvalidParameters()
@@ -76,15 +74,36 @@ class DeadlyParameters:
     def _testDeathDetection(self):
         self._runInput("Philo should die arround 310ms", "4 310 200 100")
         self._runInput("Philo should die arround 60ms", "4 60 60 60")
-        
-    
+
     def runTests(self):
         printTestBanner(self.name)
         self._testDeathDetection()
+
+
+
+class GoodParameters:
+    
+    def __init__(self):
+        self.name = "Good Parameters"
+
+    def _runInput(self, testName, inp):
+        print("\n{}Test case: {}./philo_one {}".format(LIGHT_PURPLE, RESET, inp))
+        ret = subprocess.run(RUN_COMMAND.format(inp), shell=True)
+        print("\n\t{}{}{}\n".format(LIGHT_YELLOW, testName, RESET))
+        assert ret.returncode == int(Status.OK)
+
+    def _testWithMinMeals(self):
+        self._runInput("No philosopher should die", "4 410 200 200 25")
+
+    def runTests(self):
+        printTestBanner(self.name)
+        self._testWithMinMeals()
+
 
 def main():
     assert Path('./philo_one').is_file()
     ErrorManagement().runTests()
     DeadlyParameters().runTests()
+    GoodParameters().runTests()
 
 main()
