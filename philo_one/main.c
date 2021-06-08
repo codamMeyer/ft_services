@@ -39,12 +39,14 @@ void	join_threads(t_philo *philosophers, int num_philosophers)
 
 //  implement the part where it stops after eating N meals
 
-t_status	run(const t_philo_config *config)
+t_status	run(t_philo_config *config)
 {
 	t_display	display;
 	t_fork		*forks;
 	t_philo		*philosophers;
+	t_status	ret;
 
+	ret = SUCCESS;
 	forks = create_forks(config->number_of_philosophers);
 	philosophers = create_philosophers(config, forks, &display);
 	display.lock = malloc(sizeof(pthread_mutex_t));
@@ -52,29 +54,35 @@ t_status	run(const t_philo_config *config)
 	if (!display.lock || pthread_mutex_init(display.lock, NULL))
 	{
 		cleanup_forks(forks, config->number_of_philosophers);
-		printf("\n mutex init failed\n");
 		return (ERROR);
 	}
 	create_philosophers_threads(philosophers);
 	join_threads(philosophers, config->number_of_philosophers);
+	if (config->death_event)
+		ret = DEATH_EVENT;
 	destroy_mutexes(philosophers, config->number_of_philosophers, display.lock);
 	free(forks);
 	free(philosophers);
-	return (0);
+	return (ret);
 }
 
 int	main(int argc, const char *argv[])
 {
-	const t_optional_philo_config	optional_config = \
-							parse_config_args(argc, argv);
+	t_optional_philo_config	optional_config;
 	t_status						ret;
 
+	optional_config = parse_config_args(argc, argv);
 	if (!optional_config.initialized)
 	{
 		printf("Usage:\t./philo_one <number_of_philosophers> \
 <time_to_die> <time_to_eat> <time_to_sleep> \
 [number_of_times_each_philosopher_must_eat]\n");
-		return (1);
+		return (ERROR);
+	}
+	if (optional_config.config.number_of_philosophers < 2)
+	{
+		printf("Invalid Number of Philosophers");
+		return (ERROR);
 	}
 	ret = run(&optional_config.config);
 	return (ret);

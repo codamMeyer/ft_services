@@ -71,6 +71,7 @@ t_optional_philo_config	parse_config_args(int argc, const char *argv[])
 		set_config(argv, MIN_MEALS, &optional);
 	else
 		optional.config.min_meals = NOT_SET;
+	optional.config.death_event = FALSE;
 	gettimeofday(&optional.config.time_start, NULL);
 	return (optional);
 }

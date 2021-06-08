@@ -12,12 +12,12 @@ void	display_action_message(long int time, t_philo *philo, t_action action)
 												"has taken a fork  🍴",
 												"is dead           💀",
 										   };
-	while (philo->display->is_used)
+	while (philo->display->is_used && !philo->config->death_event)
 		usleep(ONE_MILLISEC);
 	if (!philo->display->is_used)
 	{
 		philo->display->is_used = pthread_mutex_lock(philo->display->lock) == 0;
-		printf("| %6ldms | philo %4d | %s |\n", \
+		printf("%6ldms philo %3d %s |\n", \
 		time, philo->id, action_strings[action]);
 		pthread_mutex_unlock(philo->display->lock);
 		if (action != DIED)

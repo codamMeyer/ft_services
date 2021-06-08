@@ -41,6 +41,7 @@ typedef struct s_philo_config
 	t_time_ms		time_to_die;
 	t_time_ms		time_to_eat;
 	t_time_ms		time_to_sleep;
+	t_bool			death_event;
 }	t_philo_config;
 
 typedef struct s_philo
@@ -51,7 +52,7 @@ typedef struct s_philo
 	pthread_t				thread_id;
 	t_forks_pair			forks;
 	t_display				*display;
-	const t_philo_config	*config;
+	t_philo_config			*config;
 }	t_philo;
 
 typedef struct s_dinner_rules
@@ -72,12 +73,17 @@ typedef struct s_optional_philo_config
 	t_bool			initialized;
 }	t_optional_philo_config;
 
-typedef enum e_status
+typedef enum e_life_status
 {
-	ERROR = -1,
 	DEAD = 0,
 	ALIVE = 1,
-	OK = 2,
+} t_life_status;
+
+typedef enum e_status
+{
+	SUCCESS = 0,
+	DEATH_EVENT = 2,
+	ERROR = 3,
 }	t_status;
 
 #endif

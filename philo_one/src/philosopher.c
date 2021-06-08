@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-t_philo	*create_philosophers(const t_philo_config *config, \
+t_philo	*create_philosophers(t_philo_config *config, \
 									t_fork *forks, \
 									t_display *display)
 {
@@ -54,11 +54,12 @@ t_bool	get_forks(t_philo *philo)
 
 	if (!philo->forks.left->is_taken && !philo->forks.right->is_taken)
 	{
-		pthread_mutex_lock(philo->forks.left->lock);
-		pthread_mutex_lock(philo->forks.right->lock);
-		philo->forks.left->is_taken = TRUE;
-		philo->forks.right->is_taken = TRUE;
-		display_action_message(cur_time, philo, HAS_FORKS);
+		philo->forks.left->is_taken = \
+			pthread_mutex_lock(philo->forks.left->lock) == 0;
+		philo->forks.right->is_taken = \
+			pthread_mutex_lock(philo->forks.right->lock) == 0;
+		display_action_message(cur_time, philo, HAS_TAKEN_A_FORK);
+		display_action_message(cur_time, philo, HAS_TAKEN_A_FORK);
 		return (TRUE);
 	}
 	return (FALSE);
@@ -71,6 +72,7 @@ t_bool	is_dead(t_philo *philo)
 	if ((cur_time - philo->last_meal.value) > philo->config->time_to_die.value)
 	{
 		display_action_message(cur_time, philo, DIED);
+		philo->config->death_event = TRUE;
 		return (TRUE);
 	}
 	return (FALSE);
@@ -84,7 +86,7 @@ void	start_to_eat(t_philo *philo)
 	drop_forks(&philo->forks);
 }
 
-t_status	start_to_sleep(t_philo *philo)
+t_life_status	start_to_sleep(t_philo *philo)
 {
 	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
 	const unsigned int	wakeup_time = \
@@ -94,12 +96,15 @@ t_status	start_to_sleep(t_philo *philo)
 			philo->last_meal.value + philo->config->time_to_die.value;
 	unsigned int		sleep_and_die_time;
 
+	if (philo->config->death_event)
+		return (DEAD);
 	display_action_message(cur_time, philo, SLEEPING);
 	if (wakeup_time > will_starve)
 	{
 		sleep_and_die_time = philo->config->time_to_sleep.value - \
 						(wakeup_time - philo->config->time_to_sleep.value);
 		usleep(sleep_and_die_time * ONE_MILLISEC);
+		philo->config->death_event = TRUE;
 		return (DEAD);
 	}
 	usleep(philo->config->time_to_sleep.value * ONE_MILLISEC);
@@ -120,7 +125,7 @@ void	*start_dinner(void *philo)
 	t_philo			*philosopher;
 
 	philosopher = (t_philo *)philo;
-	while (!is_dead(philosopher))
+	while (!is_dead(philosopher) && !philosopher->config->death_event)
 	{
 		if (get_forks(philosopher))
 		{
@@ -151,10 +156,9 @@ t_status	create_philosophers_threads(t_philo *philosophers)
 		if (ret)
 		{
 			free(philosophers);
-			printf("\ncan't create thread :[%d]", ret);
 			return (ERROR);
 		}
 		++i;
 	}
-	return (OK);
+	return (SUCCESS);
 }

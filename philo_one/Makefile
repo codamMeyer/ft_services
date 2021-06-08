@@ -38,7 +38,8 @@ ciexample:
 
 test_run: test
 	./$(TEST_NAME)
-	../run_norminette.sh
+	./tests/integration_test.py
+	@# ../run_norminette.sh
 
 # test_integration: $(FT_PRINTF) $(PUSH_SWAP) $(CHECKER)
 # 	./test/integration_test.py
