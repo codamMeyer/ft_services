@@ -13,9 +13,9 @@ t_philo	*create_philosophers(t_philo_config *config, \
 	t_philo		*philosophers;
 	int			i;
 
-	if (!forks)
-		return (NULL);
 	philosophers = malloc(sizeof(t_philo) * num_philosophers);
+	if (!forks || !philosophers)
+		return (NULL);
 	i = 0;
 	while (i < num_philosophers)
 	{
@@ -145,7 +145,7 @@ void	*start_dinner(void *philo)
 	philosopher = (t_philo *)philo;
 	while (!is_dinner_over(philosopher))
 	{
-		if (get_forks(philosopher))
+		if (get_forks(philosopher)) 
 		{
 			start_to_eat(philosopher);
 			if (start_to_sleep(philosopher) == DEAD)
@@ -160,7 +160,7 @@ void	*start_dinner(void *philo)
 	return (NULL);
 }
 
-t_status	create_philosophers_threads(t_philo *philosophers)
+t_status	create_philosophers_threads(t_philo *philosophers, t_pthread_create create_thread)
 {
 	const int	num_philosophers = philosophers->config->number_of_philosophers;
 	int			ret;
@@ -169,10 +169,13 @@ t_status	create_philosophers_threads(t_philo *philosophers)
 	i = 0;
 	while (i < num_philosophers)
 	{
-		ret = pthread_create(&(philosophers[i].thread_id), \
+		ret = create_thread(&(philosophers[i].thread_id), \
 							NULL, &start_dinner, &philosophers[i]);
 		if (ret)
+		{
+			philosophers->config->number_of_philosophers = i;
 			return (ERROR);
+		}
 		++i;
 	}
 	return (SUCCESS);

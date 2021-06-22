@@ -25,6 +25,16 @@ void	destroy_mutexes(t_philo *philosophers,
 	pthread_mutex_destroy(display_action_message);
 }
 
+void cleanup(t_fork *forks, t_philo *philosophers, t_display *display)
+{
+	const int num_philosophers = philosophers->config->number_of_philosophers;
+
+	destroy_mutexes(philosophers, num_philosophers, display->lock);
+	cleanup_forks(forks, num_philosophers);
+	free(philosophers);
+	free(display->lock);
+}
+
 void	join_threads(t_philo *philosophers, int num_philosophers)
 {
 	int	i;
@@ -52,12 +62,12 @@ t_status	malloc_resources(t_philo_config *config, t_fork **forks, t_philo **phil
 	*philosophers = create_philosophers(config, *forks, display);
 	if (!(*philosophers))
 	{
+		free(display->lock);
 		cleanup_forks(*forks, config->number_of_philosophers);
 		return (ERROR);
 	}
 	return (SUCCESS);
 }
-
 
 t_status	run(t_philo_config *config)
 {
@@ -69,18 +79,13 @@ t_status	run(t_philo_config *config)
 	ret = SUCCESS;
 	forks = NULL;
 	philosophers = NULL;
-	if (malloc_resources(config, &forks, &philosophers, &display) != SUCCESS)
+	if (malloc_resources(config, &forks, &philosophers, &display) == ERROR)
 		return (ERROR);
-	if (create_philosophers_threads(philosophers) == SUCCESS)
-	{
-		join_threads(philosophers, config->number_of_philosophers);
-		if (config->death_event)
-			ret = DEATH_EVENT;
-	}
-	destroy_mutexes(philosophers, config->number_of_philosophers, display.lock);
-	cleanup_forks(forks, config->number_of_philosophers);
-	free(philosophers);
-	free(display.lock);
+	ret = create_philosophers_threads(philosophers, pthread_create);
+	join_threads(philosophers, config->number_of_philosophers);
+	if (config->death_event)
+		ret = DEATH_EVENT;
+	cleanup(forks, philosophers, &display);
 	return (ret);
 }
 

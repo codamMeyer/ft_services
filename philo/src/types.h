@@ -10,6 +10,9 @@
 
 typedef int	t_bool;
 
+typedef void *(t_start_routine)(void *);
+typedef int (t_pthread_create)(pthread_t *, const pthread_attr_t *, t_start_routine, void *);
+
 typedef struct s_time_ms
 {
 	uint64_t	value;
