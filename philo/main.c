@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <display.h>
 #include <parser.h>
 #include <fork.h>
 #include <types.h>
@@ -14,15 +15,14 @@ void	destroy_mutexes(t_philo *philosophers,
 	int	i;
 
 	i = 0;
+	if (!philosophers)
+		return ;
 	while (i < num_philosophers)
 	{
 		pthread_mutex_destroy(philosophers[i].forks.right->lock);
-		pthread_mutex_destroy(philosophers[i].forks.left->lock);
-		free(philosophers[i].forks.right->lock);
 		++i;
 	}
 	pthread_mutex_destroy(display_action_message);
-	free(display_action_message);
 }
 
 void	join_threads(t_philo *philosophers, int num_philosophers)
@@ -37,7 +37,27 @@ void	join_threads(t_philo *philosophers, int num_philosophers)
 	}
 }
 
-//  implement the part where it stops after eating N meals
+t_status	malloc_resources(t_philo_config *config, t_fork **forks, t_philo **philosophers, t_display *display)
+{
+	display->lock = malloc(sizeof(pthread_mutex_t));
+	display->is_used = FALSE;
+	if (!display->lock)
+		return (ERROR);
+	*forks = create_forks(config->number_of_philosophers);
+	if (!(*forks))
+	{
+		free(display->lock);
+		return (ERROR);
+	}
+	*philosophers = create_philosophers(config, *forks, display);
+	if (!(*philosophers))
+	{
+		cleanup_forks(*forks, config->number_of_philosophers);
+		return (ERROR);
+	}
+	return (SUCCESS);
+}
+
 
 t_status	run(t_philo_config *config)
 {
@@ -47,22 +67,20 @@ t_status	run(t_philo_config *config)
 	t_status	ret;
 
 	ret = SUCCESS;
-	forks = create_forks(config->number_of_philosophers);
-	philosophers = create_philosophers(config, forks, &display);
-	display.lock = malloc(sizeof(pthread_mutex_t));
-	display.is_used = FALSE;
-	if (!display.lock || pthread_mutex_init(display.lock, NULL))
-	{
-		cleanup_forks(forks, config->number_of_philosophers);
+	forks = NULL;
+	philosophers = NULL;
+	if (malloc_resources(config, &forks, &philosophers, &display) != SUCCESS)
 		return (ERROR);
+	if (create_philosophers_threads(philosophers) == SUCCESS)
+	{
+		join_threads(philosophers, config->number_of_philosophers);
+		if (config->death_event)
+			ret = DEATH_EVENT;
 	}
-	create_philosophers_threads(philosophers);
-	join_threads(philosophers, config->number_of_philosophers);
-	if (config->death_event)
-		ret = DEATH_EVENT;
 	destroy_mutexes(philosophers, config->number_of_philosophers, display.lock);
-	free(forks);
+	cleanup_forks(forks, config->number_of_philosophers);
 	free(philosophers);
+	free(display.lock);
 	return (ret);
 }
 
@@ -74,9 +92,7 @@ int	main(int argc, const char *argv[])
 	optional = parse_config_args(argc, argv);
 	if (!optional.initialized)
 	{
-		printf("Usage:\t./philo_one <number_of_philosophers> \
-<time_to_die> <time_to_eat> <time_to_sleep> \
-[number_of_times_each_philosopher_must_eat]\n");
+		display_usage_message();
 		return (ERROR);
 	}
 	if (optional.config.number_of_philosophers < 2)

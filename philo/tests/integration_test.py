@@ -11,7 +11,7 @@ LIGHT_PURPLE = "\033[1;35m"
 LIGHT_WHITE = "\033[0;37m"
 LIGHT_YELLOW = "\033[0;33m"
 RESET = "\033[0m"
-RUN_COMMAND = "./philo_one {}"
+RUN_COMMAND = "./philo {}"
 EXPECT_OK = "Expect ok"
 EXPECT_ERROR = "Expect Error"
 EXPECT_DEATH = "Expect Death"
@@ -42,7 +42,7 @@ class ErrorManagement:
         self.name = "Error Management"
 
     def _runInput(self, testName, inp):
-        print("\n{}Test case: {}{}: ./philo_one {}{}".format(LIGHT_PURPLE, LIGHT_YELLOW, testName, inp, RESET))
+        print("\n{}Test case: {}{}: ./philo {}{}".format(LIGHT_PURPLE, LIGHT_YELLOW, testName, inp, RESET))
         ret = subprocess.run(RUN_COMMAND.format(inp), shell=True)
         assert ret.returncode == int(Status.ERROR)
 
@@ -66,7 +66,7 @@ class DeadlyParameters:
         self.name = "Deadly Parameters"
 
     def _runInput(self, testName, inp):
-        print("\n{}Test case: {}./philo_one {}".format(LIGHT_PURPLE, RESET, inp))
+        print("\n{}Test case: {}./philo {}".format(LIGHT_PURPLE, RESET, inp))
         ret = subprocess.run(RUN_COMMAND.format(inp), shell=True)
         print("\n\t{}{}{}\n".format(LIGHT_YELLOW, testName, RESET))
         assert ret.returncode == int(Status.DEATH)
@@ -87,7 +87,7 @@ class GoodParameters:
         self.name = "Good Parameters"
 
     def _runInput(self, testName, inp):
-        print("\n{}Test case: {}./philo_one {}".format(LIGHT_PURPLE, RESET, inp))
+        print("\n{}Test case: {}./philo {}".format(LIGHT_PURPLE, RESET, inp))
         ret = subprocess.run(RUN_COMMAND.format(inp), shell=True)
         print("\n\t{}{}{}\n".format(LIGHT_YELLOW, testName, RESET))
         assert ret.returncode == int(Status.OK)
@@ -101,7 +101,7 @@ class GoodParameters:
 
 
 def main():
-    assert Path('./philo_one').is_file()
+    assert Path('./philo').is_file()
     ErrorManagement().runTests()
     DeadlyParameters().runTests()
     GoodParameters().runTests()

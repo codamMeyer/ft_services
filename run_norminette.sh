@@ -4,7 +4,7 @@ SUCCESS_COLOR="\033[01;32m"
 ERROR_COLOR="\033[01;31m"
 NORMAL_COLOR="\033[0m"
 
-norminette src inc parser > norminette_result
+norminette src main.c > norminette_result
 
 NORM_ERROR=$(grep -c 'Error!' norminette_result)
 

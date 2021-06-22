@@ -1,7 +1,7 @@
-PHILO=philo_one
+PHILO=philo
 TEST_NAME=$(PHILO)_test
 CC=gcc
-CFLAGS=-Wall -Wextra -Werror -O3 #-ggdb3 -fsanitize=leak -fsanitize=address
+CFLAGS=-Wall -Wextra -Werror -O3 -ggdb3 -fsanitize=leak -fsanitize=address
 TEST_CFLAGS=$(CFLAGS)
 INC_PATH=-I./src
 LDFLAGS=-lpthread

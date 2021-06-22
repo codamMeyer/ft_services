@@ -52,7 +52,5 @@ Mkfile.old
 dkms.conf
 
 norminette_result
-philo_one_test
-philo_two_test
-philo_three_test
+philo_test
 .vscode

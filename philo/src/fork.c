@@ -5,6 +5,8 @@ void	cleanup_forks(t_fork *forks, int num_forks)
 {
 	int	i;
 
+	if (!forks)
+		return ;
 	i = 0;
 	while (i < num_forks)
 	{
@@ -27,9 +29,10 @@ t_fork	*create_forks(int num_forks)
 	{
 		forks[i].lock = malloc(sizeof(pthread_mutex_t));
 		forks[i].is_taken = FALSE;
-		if (pthread_mutex_init(forks[i].lock, NULL))
+
+		if (!forks[i].lock || pthread_mutex_init(forks[i].lock, NULL) != SUCCESS)
 		{
-			cleanup_forks(forks, num_forks);
+			cleanup_forks(forks, i);
 			return (NULL);
 		}
 		++i;

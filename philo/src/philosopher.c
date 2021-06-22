@@ -13,6 +13,8 @@ t_philo	*create_philosophers(t_philo_config *config, \
 	t_philo		*philosophers;
 	int			i;
 
+	if (!forks)
+		return (NULL);
 	philosophers = malloc(sizeof(t_philo) * num_philosophers);
 	i = 0;
 	while (i < num_philosophers)
@@ -51,7 +53,7 @@ unsigned long int	get_cur_time(const struct timeval	*start)
 
 t_bool	get_forks(t_philo *philo)
 {
-	unsigned int	cur_time = get_cur_time(&philo->config->time_start);
+	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
 
 	if (!philo->forks.left->is_taken && !philo->forks.right->is_taken)
 	{
@@ -118,7 +120,7 @@ t_life_status	start_to_sleep(t_philo *philo)
 	return (ALIVE);
 }
 
-t_bool is_dinner_over(t_philo *philo)
+t_bool	is_dinner_over(t_philo *philo)
 {
 	if (philo->config->min_meals && philo->config->need_to_finish_meals == 0)
 		return (TRUE);
@@ -170,10 +172,7 @@ t_status	create_philosophers_threads(t_philo *philosophers)
 		ret = pthread_create(&(philosophers[i].thread_id), \
 							NULL, &start_dinner, &philosophers[i]);
 		if (ret)
-		{
-			free(philosophers);
 			return (ERROR);
-		}
 		++i;
 	}
 	return (SUCCESS);

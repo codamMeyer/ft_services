@@ -78,7 +78,7 @@ typedef enum e_life_status
 {
 	DEAD = 0,
 	ALIVE = 1,
-} t_life_status;
+}	t_life_status;
 
 typedef enum e_status
 {

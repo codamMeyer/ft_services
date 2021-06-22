@@ -12,6 +12,7 @@ typedef enum e_action
 	DIED = 4
 }	t_action;
 
+void	display_usage_message(void);
 void	display_action_message(long int time, t_philo *philo, t_action action);
 
 #endif
