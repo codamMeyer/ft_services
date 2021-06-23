@@ -20,7 +20,7 @@ CTEST_SETUP(thread_test)
     data->config.time_to_eat.value = 60;
     data->config.time_to_sleep.value = 60;
     data->display.lock = malloc(sizeof(pthread_mutex_t));
-	data->display.is_used = FALSE;
+	data->display.is_used = TRUE;
     data->forks = create_forks(data->config.number_of_philosophers);
     data->philosophers = create_philosophers(&data->config, data->forks, &data->display);
 };
@@ -40,11 +40,12 @@ CTEST_TEARDOWN(thread_test)
 int create_fake_thread_first(pthread_t *thread, const pthread_attr_t * attr, t_start_routine routine, void * ptr)
 {
     static int i = 0;
+    int ret = 1;
 
-    if (i++ == 0)
-        return 1;
-    else
-        return pthread_create(thread, attr, routine, ptr);
+    if (i > 0)
+        ret = pthread_create(thread, attr, routine, ptr);
+    ++i;
+    return ret;
 }
 
 CTEST2(thread_test, first_philo_theard_fails)
@@ -54,13 +55,14 @@ CTEST2(thread_test, first_philo_theard_fails)
 
 int create_fake_thread_second(pthread_t *thread, const pthread_attr_t * attr, t_start_routine routine, void * ptr)
 {
-    static int i = 0;
 
-    if (i++ == 1)
-        return 1;
-    else
-        return pthread_create(thread, attr, routine, ptr);
-}
+    static int i = 0;
+    int ret = 1;
+
+    if (i != 1)
+        ret = pthread_create(thread, attr, routine, ptr);
+    ++i;
+    return ret;}
 
 CTEST2(thread_test, second_philo_theard_fails)
 {
@@ -78,11 +80,12 @@ CTEST2(thread_test, second_philo_theard_fails)
 int create_fake_thread_last(pthread_t *thread, const pthread_attr_t * attr, t_start_routine routine, void * ptr)
 {
     static int i = 0;
+    int ret = 1;
 
-    if (i++ == 4)
-        return 1;
-    else
-        return pthread_create(thread, attr, routine, ptr);
+    if (i != 4)
+        ret = pthread_create(thread, attr, routine, ptr);
+    ++i;
+    return ret;
 }
 
 CTEST2(thread_test, last_philo_theard_fails)

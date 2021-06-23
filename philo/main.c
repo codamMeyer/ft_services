@@ -50,7 +50,7 @@ void	join_threads(t_philo *philosophers, int num_philosophers)
 t_status	malloc_resources(t_philo_config *config, t_fork **forks, t_philo **philosophers, t_display *display)
 {
 	display->lock = malloc(sizeof(pthread_mutex_t));
-	display->is_used = FALSE;
+	display->is_used = TRUE;
 	if (!display->lock)
 		return (ERROR);
 	*forks = create_forks(config->number_of_philosophers);
