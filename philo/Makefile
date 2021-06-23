@@ -21,6 +21,7 @@ PHILO_SRCS=					\
 
 TEST_FILES=					\
 	tests/parser_test.c 	\
+	tests/philo_test.c	 	\
 	tests/main.c 			\
 
 PHILO_OBJS=$(PHILO_SRCS:.c=.o)

@@ -173,7 +173,8 @@ t_status	create_philosophers_threads(t_philo *philosophers, t_pthread_create cre
 							NULL, &start_dinner, &philosophers[i]);
 		if (ret)
 		{
-			philosophers->config->number_of_philosophers = i;
+			philosophers->config->death_event = TRUE;
+			philosophers->config->initialized_threads = i;
 			return (ERROR);
 		}
 		++i;

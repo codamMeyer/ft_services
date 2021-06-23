@@ -82,7 +82,7 @@ t_status	run(t_philo_config *config)
 	if (malloc_resources(config, &forks, &philosophers, &display) == ERROR)
 		return (ERROR);
 	ret = create_philosophers_threads(philosophers, pthread_create);
-	join_threads(philosophers, config->number_of_philosophers);
+	join_threads(philosophers, config->initialized_threads);
 	if (config->death_event)
 		ret = DEATH_EVENT;
 	cleanup(forks, philosophers, &display);

@@ -46,6 +46,7 @@ typedef struct s_philo_config
 	t_time_ms		time_to_eat;
 	t_time_ms		time_to_sleep;
 	t_bool			death_event;
+	int				initialized_threads;
 }	t_philo_config;
 
 typedef struct s_philo
