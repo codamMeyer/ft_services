@@ -179,6 +179,7 @@ t_status	create_philosophers_threads(t_philo *philosophers, t_pthread_create cre
 		}
 		++i;
 	}
+	philosophers->config->initialized_threads = num_philosophers;
 	philosophers->display->is_used = FALSE;
 	return (SUCCESS);
 }

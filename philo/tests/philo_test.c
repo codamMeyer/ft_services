@@ -48,7 +48,7 @@ int create_fake_thread_first(pthread_t *thread, const pthread_attr_t * attr, t_s
     return ret;
 }
 
-CTEST2(thread_test, first_philo_theard_fails)
+CTEST2(thread_test, first_philo_thread_fails)
 {
     ASSERT_EQUAL(ERROR, create_philosophers_threads(data->philosophers, create_fake_thread_first));
 }
@@ -64,7 +64,7 @@ int create_fake_thread_second(pthread_t *thread, const pthread_attr_t * attr, t_
     ++i;
     return ret;}
 
-CTEST2(thread_test, second_philo_theard_fails)
+CTEST2(thread_test, second_philo_thread_fails)
 {
     ASSERT_EQUAL(ERROR, create_philosophers_threads(data->philosophers, create_fake_thread_second));
 	int	i;
@@ -88,9 +88,22 @@ int create_fake_thread_last(pthread_t *thread, const pthread_attr_t * attr, t_st
     return ret;
 }
 
-CTEST2(thread_test, last_philo_theard_fails)
+CTEST2(thread_test, last_philo_thread_fails)
 {
     ASSERT_EQUAL(ERROR, create_philosophers_threads(data->philosophers, create_fake_thread_last));
+	int	i;
+
+	i = 0;
+	while (i < data->config.initialized_threads)
+	{
+		pthread_join(data->philosophers[i].thread_id, NULL);
+		++i;
+	}
+}
+
+CTEST2(thread_test, philo_thread_success)
+{
+    ASSERT_EQUAL(SUCCESS, create_philosophers_threads(data->philosophers, pthread_create));
 	int	i;
 
 	i = 0;
