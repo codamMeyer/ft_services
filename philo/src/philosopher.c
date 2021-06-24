@@ -50,15 +50,6 @@ t_philo	*create_philosophers(t_philo_config *config, \
 	return (philosophers);
 }
 
-t_bool	is_dinner_over(t_philo *philo)
-{
-	if (philo->config->min_meals && philo->config->need_to_finish_meals == 0)
-		return (TRUE);
-	if (is_dead(philo) || philo->config->death_event)
-		return (TRUE);
-	return (FALSE);
-}
-
 void	*start_dinner(void *philo)
 {
 	unsigned int	cur_time;

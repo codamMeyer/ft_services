@@ -24,9 +24,9 @@ static void	join_philosophers_threads(t_philo *philosophers, int num_threads)
 }
 
 static t_status	malloc_resources(t_philo_config *config,
-							t_fork **forks,
-							t_philo **philosophers,
-							t_display *display)
+								t_fork **forks,
+								t_philo **philosophers,
+								t_display *display)
 {
 	*display = create_display();
 	if (!display->lock)

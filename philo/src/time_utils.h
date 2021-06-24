@@ -5,5 +5,6 @@
 
 unsigned long int	get_cur_time(const struct timeval	*start);
 t_bool				is_dead(t_philo *philo);
+t_bool				is_dinner_over(t_philo *philo);
 
 #endif

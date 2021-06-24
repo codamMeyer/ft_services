@@ -3,14 +3,6 @@
 #include <display.h>
 #include <unistd.h>
 
-void	drop_forks(t_forks_pair *forks)
-{
-	pthread_mutex_unlock(forks->left->lock);
-	pthread_mutex_unlock(forks->right->lock);
-	forks->left->is_taken = FALSE;
-	forks->right->is_taken = FALSE;
-}
-
 t_bool	get_forks(t_philo *philo)
 {
 	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
@@ -26,6 +18,14 @@ t_bool	get_forks(t_philo *philo)
 		return (TRUE);
 	}
 	return (FALSE);
+}
+
+static void	drop_forks(t_forks_pair *forks)
+{
+	pthread_mutex_unlock(forks->left->lock);
+	pthread_mutex_unlock(forks->right->lock);
+	forks->left->is_taken = FALSE;
+	forks->right->is_taken = FALSE;
 }
 
 void	start_to_eat(t_philo *philo)

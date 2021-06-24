@@ -22,3 +22,12 @@ t_bool	is_dead(t_philo *philo)
 	}
 	return (FALSE);
 }
+
+t_bool	is_dinner_over(t_philo *philo)
+{
+	if (philo->config->min_meals && philo->config->need_to_finish_meals == 0)
+		return (TRUE);
+	if (is_dead(philo) || philo->config->death_event)
+		return (TRUE);
+	return (FALSE);
+}
