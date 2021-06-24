@@ -22,4 +22,3 @@ t_bool	is_dead(t_philo *philo)
 	}
 	return (FALSE);
 }
-

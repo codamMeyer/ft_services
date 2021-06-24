@@ -3,7 +3,6 @@
 #include <parser.h>
 #include <philosophers_dinner.h>
 
-
 int	main(int argc, const char *argv[])
 {
 	t_optional_philo_config	optional;

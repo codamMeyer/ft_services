@@ -25,10 +25,10 @@ PHILO_SRCS=						\
 	src/philosophers_dinner.c	\
 
 
-TEST_FILES=					\
-	tests/parser_test.c 	\
-	tests/philo_test.c	 	\
-	tests/main.c 			\
+TEST_FILES=						\
+	tests/parser_test.c 		\
+	tests/philo_test.c	 		\
+	tests/main.c 				\
 
 PHILO_OBJS=$(PHILO_SRCS:.c=.o)
 
@@ -37,15 +37,12 @@ all: $(PHILO)
 $(PHILO): $(PHILO_OBJS)
 		$(CC) $(CFLAGS) $(INC_PATH) main.c  -o $@ $^ $(LDFLAGS)
 
-ciexample:
-	@echo "Just testing"
-
 %.o: %.c $(PHILO_INCS)
 	@$(CC) $(CFLAGS) $(INC_PATH) -c -o $@ $<
 
 test_run: test
 	./$(TEST_NAME)
-	@# ../run_norminette.sh
+	@../run_norminette.sh
 
 test_integration: $(PHILO)
 	./tests/integration_test.py

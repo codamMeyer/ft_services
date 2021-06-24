@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <time_utils.h>
 
-void	setup_philosopher(t_philo *philosopher, \
+static void	setup_philosopher(t_philo *philosopher, \
 							int id, \
 							t_display *display, \
 							t_philo_config *config)
@@ -18,7 +18,7 @@ void	setup_philosopher(t_philo *philosopher, \
 	philosopher->config = config;
 }
 
-void	assign_forks(t_philo *philosopher, t_fork *forks, int i, int last_philo)
+static void	assign_forks(t_philo *philosopher, t_fork *forks, int i, int last_philo)
 {
 	philosopher->forks.right = &forks[i];
 	if (i == 0)
@@ -112,6 +112,14 @@ t_life_status	start_to_sleep(t_philo *philo)
 	return (ALIVE);
 }
 
+void	start_to_think(t_philo *philo)
+{
+	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
+
+	display_action_message(cur_time, philo, THINKING);
+	usleep(ONE_MILLISEC);
+}
+
 t_bool	is_dinner_over(t_philo *philo)
 {
 	if (philo->config->min_meals && philo->config->need_to_finish_meals == 0)
@@ -119,14 +127,6 @@ t_bool	is_dinner_over(t_philo *philo)
 	if (is_dead(philo) || philo->config->death_event)
 		return (TRUE);
 	return (FALSE);
-}
-
-void	start_to_think(t_philo *philo)
-{
-	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
-
-	display_action_message(cur_time, philo, THINKING);
-	usleep(ONE_MILLISEC);
 }
 
 void	*start_dinner(void *philo)
