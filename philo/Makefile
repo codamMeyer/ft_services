@@ -6,18 +6,22 @@ TEST_CFLAGS=$(CFLAGS)
 INC_PATH=-I./src
 LDFLAGS=-lpthread
 
-PHILO_INCS=					\
-	src/parser.h			\
-	src/types.h				\
-	src/philosopher.h		\
-	src/fork.h				\
-	src/display.h			\
+PHILO_INCS=						\
+	src/parser.h				\
+	src/types.h					\
+	src/philosopher.h			\
+	src/fork.h					\
+	src/display.h				\
+	src/philosophers_dinner.h	\
 
-PHILO_SRCS=					\
-	src/parser.c			\
-	src/philosopher.c		\
-	src/fork.c				\
-	src/display.c			\
+
+PHILO_SRCS=						\
+	src/parser.c				\
+	src/philosopher.c			\
+	src/fork.c					\
+	src/display.c				\
+	src/philosophers_dinner.c	\
+
 
 TEST_FILES=					\
 	tests/parser_test.c 	\

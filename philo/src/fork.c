@@ -14,8 +14,7 @@ t_fork	*create_forks(int num_forks)
 	{
 		forks[i].lock = malloc(sizeof(pthread_mutex_t));
 		forks[i].is_taken = FALSE;
-
-		if (!forks[i].lock || pthread_mutex_init(forks[i].lock, NULL) != SUCCESS)
+		if (!forks[i].lock || pthread_mutex_init(forks[i].lock, NULL) == ERROR)
 		{
 			destroy_forks(forks, i);
 			return (NULL);

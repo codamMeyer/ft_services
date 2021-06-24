@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-t_display create_display()
+t_display	create_display(void)
 {
-	t_display display;
+	t_display	display;
 
 	display.lock = malloc(sizeof(pthread_mutex_t));
 	display.is_used = TRUE;
@@ -24,7 +24,8 @@ void	destroy_display(t_display *display)
 void	display_usage_message(void)
 {
 	printf("Usage:\t./philo <number_of_philosophers> <time_to_die> ");
-	printf("<time_to_eat> <time_to_sleep> [number_of_times_each_philosopher_must_eat]\n");
+	printf("<time_to_eat> <time_to_sleep>");
+	printf("[number_of_times_each_philosopher_must_eat]\n");
 }
 
 void	display_action_message(long int time, t_philo *philo, t_action action)
