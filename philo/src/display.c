@@ -25,7 +25,7 @@ void	display_usage_message(void)
 {
 	printf("Usage:\t./philo <number_of_philosophers> <time_to_die> ");
 	printf("<time_to_eat> <time_to_sleep>");
-	printf("[number_of_times_each_philosopher_must_eat]\n");
+	printf(" [number_of_times_each_philosopher_must_eat]\n");
 }
 
 void	display_action_message(long int time, t_philo *philo, t_action action)

@@ -13,6 +13,7 @@ PHILO_INCS=						\
 	src/fork.h					\
 	src/display.h				\
 	src/time_utils.h			\
+	src/philosophers_actions.h	\
 	src/philosophers_dinner.h	\
 
 
@@ -22,6 +23,7 @@ PHILO_SRCS=						\
 	src/fork.c					\
 	src/display.c				\
 	src/time_utils.c			\
+	src/philosophers_actions.c	\
 	src/philosophers_dinner.c	\
 
 
