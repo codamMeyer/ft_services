@@ -5,9 +5,30 @@
 #include <unistd.h>
 #include <sys/time.h>
 
+void	setup_philosopher(t_philo *philosopher, \
+							int id, \
+							t_display *display, \
+							t_philo_config *config)
+{
+	philosopher->id = id;
+	philosopher->last_meal.value = 0;
+	philosopher->meals_counter = 0;
+	philosopher->display = display;
+	philosopher->config = config;
+}
+
+void	assign_forks(t_philo *philosopher, t_fork *forks, int i, int last_philo)
+{
+	philosopher->forks.right = &forks[i];
+	if (i == 0)
+		philosopher->forks.left = &forks[last_philo];
+	else
+		philosopher->forks.left = &forks[i - 1];
+}
+
 t_philo	*create_philosophers(t_philo_config *config, \
-									t_fork *forks, \
-									t_display *display)
+							t_fork *forks, \
+							t_display *display)
 {
 	const int	num_philosophers = config->number_of_philosophers;
 	t_philo		*philosophers;
@@ -19,16 +40,8 @@ t_philo	*create_philosophers(t_philo_config *config, \
 	i = 0;
 	while (i < num_philosophers)
 	{
-		philosophers[i].id = i + 1;
-		philosophers[i].last_meal.value = 0;
-		philosophers[i].forks.right = &forks[i];
-		if (i == 0)
-			philosophers[i].forks.left = &forks[num_philosophers - 1];
-		else
-			philosophers[i].forks.left = &forks[i - 1];
-		philosophers[i].meals_counter = 0;
-		philosophers[i].display = display;
-		philosophers[i].config = config;
+		setup_philosopher(&philosophers[i], i + 1, display, config);
+		assign_forks(&philosophers[i], forks, i, num_philosophers - 1);
 		++i;
 	}
 	return (philosophers);
@@ -42,6 +55,7 @@ void	drop_forks(t_forks_pair *forks)
 	forks->right->is_taken = FALSE;
 }
 
+// time_utils.h time_utils.h
 unsigned long int	get_cur_time(const struct timeval	*start)
 {
 	struct timeval	time_action;
@@ -68,6 +82,7 @@ t_bool	get_forks(t_philo *philo)
 	return (FALSE);
 }
 
+//time_utils
 t_bool	is_dead(t_philo *philo)
 {
 	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
@@ -145,7 +160,7 @@ void	*start_dinner(void *philo)
 	philosopher = (t_philo *)philo;
 	while (!is_dinner_over(philosopher))
 	{
-		if (get_forks(philosopher)) 
+		if (get_forks(philosopher))
 		{
 			start_to_eat(philosopher);
 			if (start_to_sleep(philosopher) == DEAD)
@@ -160,7 +175,8 @@ void	*start_dinner(void *philo)
 	return (NULL);
 }
 
-t_status	create_philosophers_threads(t_philo *philosophers, t_pthread_create create_thread)
+t_status	create_philosophers_threads(t_philo *philosophers, \
+										t_pthread_create create_thread)
 {
 	const int	num_philosophers = philosophers->config->number_of_philosophers;
 	int			ret;
