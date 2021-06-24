@@ -2,6 +2,24 @@
 #include <stdio.h>
 #include <types.h>
 #include <unistd.h>
+#include <stdlib.h>
+
+t_display create_display()
+{
+	t_display display;
+
+	display.lock = malloc(sizeof(pthread_mutex_t));
+	display.is_used = TRUE;
+	return (display);
+}
+
+void	destroy_display(t_display *display)
+{
+	if (!display->lock)
+		return ;
+	pthread_mutex_destroy(display->lock);
+	free(display->lock);
+}
 
 void	display_usage_message(void)
 {

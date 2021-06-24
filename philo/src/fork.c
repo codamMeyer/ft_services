@@ -1,21 +1,6 @@
 #include <fork.h>
 #include <stdlib.h>
 
-void	cleanup_forks(t_fork *forks, int num_forks)
-{
-	int	i;
-
-	if (!forks)
-		return ;
-	i = 0;
-	while (i < num_forks)
-	{
-		free(forks[i].lock);
-		++i;
-	}
-	free(forks);
-}
-
 t_fork	*create_forks(int num_forks)
 {
 	t_fork	*forks;
@@ -32,10 +17,40 @@ t_fork	*create_forks(int num_forks)
 
 		if (!forks[i].lock || pthread_mutex_init(forks[i].lock, NULL) != SUCCESS)
 		{
-			cleanup_forks(forks, i);
+			destroy_forks(forks, i);
 			return (NULL);
 		}
 		++i;
 	}
 	return (forks);
+}
+
+static void	destroy_forks_mutexes(t_fork *forks, int num_forks)
+{
+	int	i;
+
+	i = 0;
+	if (!forks)
+		return ;
+	while (i < num_forks)
+	{
+		pthread_mutex_destroy(forks[i].lock);
+		++i;
+	}
+}
+
+void	destroy_forks(t_fork *forks, int num_forks)
+{
+	int	i;
+
+	i = 0;
+	if (!forks)
+		return ;
+	destroy_forks_mutexes(forks, num_forks);
+	while (i < num_forks)
+	{
+		free(forks[i].lock);
+		++i;
+	}
+	free(forks);
 }

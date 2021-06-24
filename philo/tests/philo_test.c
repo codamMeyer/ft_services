@@ -19,6 +19,7 @@ CTEST_SETUP(thread_test)
     data->config.time_to_die.value = 410;
     data->config.time_to_eat.value = 60;
     data->config.time_to_sleep.value = 60;
+    data->config.min_meals = 2;
     data->display.lock = malloc(sizeof(pthread_mutex_t));
 	data->display.is_used = TRUE;
     data->forks = create_forks(data->config.number_of_philosophers);
@@ -50,6 +51,7 @@ int create_fake_thread_first(pthread_t *thread, const pthread_attr_t * attr, t_s
 
 CTEST2(thread_test, first_philo_thread_fails)
 {
+	gettimeofday(&data->config.time_start, NULL);
     ASSERT_EQUAL(ERROR, create_philosophers_threads(data->philosophers, create_fake_thread_first));
 }
 
@@ -66,6 +68,7 @@ int create_fake_thread_second(pthread_t *thread, const pthread_attr_t * attr, t_
 
 CTEST2(thread_test, second_philo_thread_fails)
 {
+	gettimeofday(&data->config.time_start, NULL);
     ASSERT_EQUAL(ERROR, create_philosophers_threads(data->philosophers, create_fake_thread_second));
 	int	i;
 
@@ -90,6 +93,7 @@ int create_fake_thread_last(pthread_t *thread, const pthread_attr_t * attr, t_st
 
 CTEST2(thread_test, last_philo_thread_fails)
 {
+	gettimeofday(&data->config.time_start, NULL);
     ASSERT_EQUAL(ERROR, create_philosophers_threads(data->philosophers, create_fake_thread_last));
 	int	i;
 
@@ -103,6 +107,7 @@ CTEST2(thread_test, last_philo_thread_fails)
 
 CTEST2(thread_test, philo_thread_success)
 {
+	gettimeofday(&data->config.time_start, NULL);
     ASSERT_EQUAL(SUCCESS, create_philosophers_threads(data->philosophers, pthread_create));
 	int	i;
 
