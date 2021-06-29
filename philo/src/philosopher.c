@@ -1,5 +1,4 @@
 #include <philosopher.h>
-#include <philosophers_actions.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <display.h>

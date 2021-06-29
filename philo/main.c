@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <display.h>
 #include <parser.h>
-#include <philosophers_dinner.h>
+#include <dinner.h>
 
 int	main(int argc, const char *argv[])
 {

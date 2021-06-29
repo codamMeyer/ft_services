@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <philosopher.h>
-#include <philosophers_dinner.h>
+#include <dinner.h>
 
 static void	cleanup(t_fork *forks, t_philo *philosophers, t_display *display)
 {
@@ -34,13 +34,13 @@ static t_status	malloc_resources(t_philo_config *config,
 	*forks = create_forks(config->number_of_philosophers);
 	if (!(*forks))
 	{
-		free(display->lock);
+		destroy_display(display);
 		return (ERROR);
 	}
 	*philosophers = create_philosophers(config, *forks, display);
 	if (!(*philosophers))
 	{
-		free(display->lock);
+		destroy_display(display);
 		destroy_forks(*forks, config->number_of_philosophers);
 		return (ERROR);
 	}
