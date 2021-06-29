@@ -34,14 +34,14 @@ t_bool	is_dinner_over(t_philo *philo)
 	return (FALSE);
 }
 
-void sleep_one_ms(void)
+void	sleep_one_ms(void)
 {
-	const t_time_ms one_ms = {.value = 0.1};
+	const t_time_ms	one_ms = {.value = 1};
 
 	sleep_ms(one_ms);
 }
 
-void sleep_ms(t_time_ms sleep_ms)
+void	sleep_ms(t_time_ms sleep_ms)
 {
 	const uint64_t	mult_value = 1000;
 

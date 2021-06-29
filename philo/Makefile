@@ -6,31 +6,31 @@ TEST_CFLAGS=$(CFLAGS)
 INC_PATH=-I./src
 LDFLAGS=-lpthread
 
-PHILO_INCS=						\
-	src/parser.h				\
-	src/types.h					\
-	src/philosopher.h			\
-	src/fork.h					\
-	src/display.h				\
-	src/time_utils.h			\
-	src/dinner.h				\
+PHILO_INCS=							\
+	src/parser.h					\
+	src/types.h						\
+	src/philosopher.h				\
+	src/fork.h						\
+	src/display.h					\
+	src/time_utils.h				\
+	src/dinner.h					\
 
 
-PHILO_SRCS=						\
-	src/parser.c				\
-	src/philosopher.c			\
-	src/fork.c					\
-	src/display.c				\
-	src/time_utils.c			\
-	src/philosopher_eat.c		\
-	src/philosopher_actions.c	\
-	src/dinner.c				\
+PHILO_SRCS=							\
+	src/parser.c					\
+	src/philosopher.c				\
+	src/fork.c						\
+	src/display.c					\
+	src/time_utils.c				\
+	src/philosopher_eat.c			\
+	src/philosopher_sleep_think.c	\
+	src/dinner.c					\
 
 
-TEST_FILES=						\
-	tests/parser_test.c 		\
-	tests/philo_test.c	 		\
-	tests/main.c 				\
+TEST_FILES=							\
+	tests/parser_test.c 			\
+	tests/philo_test.c	 			\
+	tests/main.c 					\
 
 PHILO_OBJS=$(PHILO_SRCS:.c=.o)
 
