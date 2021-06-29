@@ -3,7 +3,6 @@
 # define TRUE 1
 # define FALSE 0
 # define NOT_SET 0
-# define ONE_MILLISEC 1000
 # include <stdint.h>
 # include <sys/time.h>
 # include <pthread.h>

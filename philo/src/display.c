@@ -1,8 +1,8 @@
 #include <display.h>
 #include <stdio.h>
 #include <types.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <time_utils.h>
 
 t_display	create_display(void)
 {
@@ -39,7 +39,7 @@ void	display_action_message(long int time, t_philo *philo, t_action action)
 										   };
 
 	while (philo->display->is_used && !philo->config->death_event)
-		usleep(ONE_MILLISEC);
+		sleep_one_ms();
 	if (!philo->display->is_used)
 	{
 		philo->display->is_used = \

@@ -1,12 +1,14 @@
 #include <time_utils.h>
 #include <display.h>
+#include <unistd.h>
 
 unsigned long int	get_cur_time(const struct timeval	*start)
 {
+	const uint64_t	mult_value = 1000;
 	struct timeval	time_action;
 
 	gettimeofday(&time_action, NULL);
-	return ((time_action.tv_sec - start->tv_sec) * ONE_MILLISEC \
+	return ((time_action.tv_sec - start->tv_sec) * mult_value \
 		+ (time_action.tv_usec - start->tv_usec) * 0.001);
 }
 
@@ -30,4 +32,18 @@ t_bool	is_dinner_over(t_philo *philo)
 	if (is_dead(philo) || philo->config->death_event)
 		return (TRUE);
 	return (FALSE);
+}
+
+void sleep_one_ms(void)
+{
+	const t_time_ms one_ms = {.value = 0.1};
+
+	sleep_ms(one_ms);
+}
+
+void sleep_ms(t_time_ms sleep_ms)
+{
+	const uint64_t	mult_value = 1000;
+
+	usleep(sleep_ms.value * mult_value);
 }
