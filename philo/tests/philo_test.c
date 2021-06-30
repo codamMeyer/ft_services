@@ -1,5 +1,6 @@
 #include "ctest.h"
 #include <philosopher.h>
+#include <time_utils.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -51,7 +52,7 @@ int create_fake_thread_first(pthread_t *thread, const pthread_attr_t * attr, t_s
 
 CTEST2(thread_test, first_philo_thread_fails)
 {
-	gettimeofday(&data->config.time_start, NULL);
+	data->config.time_start = get_timestamp();
     ASSERT_EQUAL(ERROR, create_philosophers_threads(data->philosophers, create_fake_thread_first));
 }
 
@@ -68,7 +69,7 @@ int create_fake_thread_second(pthread_t *thread, const pthread_attr_t * attr, t_
 
 CTEST2(thread_test, second_philo_thread_fails)
 {
-	gettimeofday(&data->config.time_start, NULL);
+	data->config.time_start = get_timestamp();
     ASSERT_EQUAL(ERROR, create_philosophers_threads(data->philosophers, create_fake_thread_second));
 	int	i;
 
@@ -93,7 +94,7 @@ int create_fake_thread_last(pthread_t *thread, const pthread_attr_t * attr, t_st
 
 CTEST2(thread_test, last_philo_thread_fails)
 {
-	gettimeofday(&data->config.time_start, NULL);
+	data->config.time_start = get_timestamp();
     ASSERT_EQUAL(ERROR, create_philosophers_threads(data->philosophers, create_fake_thread_last));
 	int	i;
 
@@ -107,7 +108,7 @@ CTEST2(thread_test, last_philo_thread_fails)
 
 CTEST2(thread_test, philo_thread_success)
 {
-	gettimeofday(&data->config.time_start, NULL);
+	data->config.time_start = get_timestamp();
     ASSERT_EQUAL(SUCCESS, create_philosophers_threads(data->philosophers, pthread_create));
 	int	i;
 

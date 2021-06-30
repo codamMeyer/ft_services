@@ -11,24 +11,27 @@ t_time_ms	get_timestamp(void)
 	t_time_ms		timestamp;
 
 	gettimeofday(&time, NULL);
-	timestamp.value = (time.tv_sec * milli_factor) + (time.tv_usec / milli_factor);
+	timestamp.value = (time.tv_sec * milli_factor) + \
+						(time.tv_usec / milli_factor);
 	return (timestamp);
 }
 
 t_time_ms	get_timestamp_diff(t_time_ms start)
 {
-	const t_time_ms diff = {.value = get_timestamp().value - start.value};
+	const t_time_ms	diff = {.value = get_timestamp().value - start.value};
 
 	return (diff);
 }
 
 t_bool	is_dead(t_philo *philo)
 {
-	const t_time_ms	time_diff = get_timestamp_diff(philo->config->time_start);
+	const t_time_ms	timestamp = get_timestamp_diff(philo->config->time_start);
+	const uint64_t	time_since_last_meal = \
+					(timestamp.value - philo->last_meal.value);
 
-	if ((time_diff.value - philo->last_meal.value) > philo->config->time_to_die.value)
+	if (time_since_last_meal > philo->config->time_to_die.value)
 	{
-		display_action_message(time_diff.value, philo, DIED);
+		display_action_message(timestamp.value, philo, DIED);
 		philo->config->death_event = TRUE;
 		return (TRUE);
 	}
@@ -46,12 +49,11 @@ t_bool	is_dinner_over(t_philo *philo)
 
 void	sleep_ms(t_time_ms sleep_ms)
 {
-	t_time_ms i;
+	const t_time_ms	start = get_timestamp();
 
-	i = get_timestamp();
 	while (TRUE)
 	{
-		if (get_timestamp().value - i.value >= sleep_ms.value)
+		if (get_timestamp().value - start.value >= sleep_ms.value)
 			break ;
 		usleep(50);
 	}

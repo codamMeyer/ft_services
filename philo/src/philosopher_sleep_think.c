@@ -51,7 +51,7 @@ t_life_status	start_to_sleep(t_philo *philo)
 
 void	start_to_think(t_philo *philo)
 {
-	const t_time_ms	cur_time = get_timestamp_diff(philo->config->time_start);
+	const t_time_ms	timestamp = get_timestamp_diff(philo->config->time_start);
 
-	display_action_message(cur_time.value, philo, THINKING);
+	display_action_message(timestamp.value, philo, THINKING);
 }
