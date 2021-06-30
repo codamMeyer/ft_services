@@ -60,7 +60,6 @@ t_status	run(t_philo_config *config)
 	philosophers = NULL;
 	if (malloc_resources(config, &forks, &philosophers, &display) == ERROR)
 		return (ERROR);
-	config->time_start = get_timestamp();
 	ret = create_philosophers_threads(philosophers, pthread_create);
 	join_philosophers_threads(philosophers, config->initialized_threads);
 	if (config->death_event)

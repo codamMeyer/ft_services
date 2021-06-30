@@ -80,6 +80,7 @@ t_status	create_philosophers_threads(t_philo *philosophers, \
 	int			i;
 
 	i = 0;
+	philosophers->config->time_start = get_timestamp();
 	while (i < num_philosophers)
 	{
 		ret = create_thread(&(philosophers[i].thread_id), \

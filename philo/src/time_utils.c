@@ -1,6 +1,8 @@
 #include <time_utils.h>
 #include <display.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <time_utils.h>
 
 t_time_ms	get_timestamp(void)
 {
@@ -44,7 +46,13 @@ t_bool	is_dinner_over(t_philo *philo)
 
 void	sleep_ms(t_time_ms sleep_ms)
 {
-	const uint64_t	mult_value = 1000;
+	t_time_ms i;
 
-	usleep(sleep_ms.value * mult_value);
+	i = get_timestamp();
+	while (TRUE)
+	{
+		if (get_timestamp().value - i.value >= sleep_ms.value)
+			break ;
+		usleep(50);
+	}
 }
