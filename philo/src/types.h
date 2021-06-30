@@ -55,17 +55,12 @@ typedef struct s_philo
 	int						id;
 	int						meals_counter;
 	t_time_ms				last_meal;
+	t_time_ms				finished_eating;
 	pthread_t				thread_id;
 	t_forks_pair			forks;
 	t_display				*display;
 	t_philo_config			*config;
 }	t_philo;
-
-typedef struct s_dinner_rules
-{
-	t_philo					*philo;
-	const t_philo_config	*config;
-}	t_dinner_rules;
 
 typedef struct s_optional_int
 {

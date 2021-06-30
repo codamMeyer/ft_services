@@ -30,6 +30,7 @@ void	display_usage_message(void)
 
 void	display_action_message(long int time, t_philo *philo, t_action action)
 {
+	const t_time_ms		wait_time = {.value = 0.001};
 	static const char	*action_str[5] = {
 												"is eating         🍝",
 												"is sleeping       💤",
@@ -39,7 +40,7 @@ void	display_action_message(long int time, t_philo *philo, t_action action)
 										   };
 
 	while (philo->display->is_used && !philo->config->death_event)
-		sleep_one_ms();
+		sleep_ms(wait_time);
 	if (!philo->display->is_used)
 	{
 		philo->display->is_used = \

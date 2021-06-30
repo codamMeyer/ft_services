@@ -2,7 +2,15 @@
 #include <display.h>
 #include <unistd.h>
 
-unsigned long int	get_cur_time(const struct timeval	*start)
+long long	get_timestamp(void)
+{
+	struct timeval	time;
+
+	gettimeofday(&time, NULL);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
+
+uint64_t	get_cur_time(const struct timeval	*start)
 {
 	const uint64_t	mult_value = 1000;
 	struct timeval	time_action;
