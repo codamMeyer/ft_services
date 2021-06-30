@@ -93,7 +93,7 @@ class GoodParameters:
         assert ret.returncode == int(Status.OK)
 
     def _testWithMinMeals(self):
-        self._runInput("No philosopher should die", "4 410 200 200 25")
+        self._runInput("No philosopher should die", "4 410 200 200 5")
 
     def runTests(self):
         printTestBanner(self.name)

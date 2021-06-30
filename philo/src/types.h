@@ -42,7 +42,7 @@ typedef struct s_philo_config
 	int				min_meals;
 	int				need_to_finish_meals;
 	int				number_of_philosophers;
-	struct timeval	time_start;
+	t_time_ms		time_start;
 	t_time_ms		time_to_die;
 	t_time_ms		time_to_eat;
 	t_time_ms		time_to_sleep;

@@ -2,6 +2,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <time_utils.h>
 
 static t_bool	ft_isdigit(char c)
 {
@@ -74,6 +75,5 @@ t_optional_philo_config	parse_config_args(int argc, const char *argv[])
 	optional.config.death_event = FALSE;
 	optional.config.need_to_finish_meals = \
 		optional.config.number_of_philosophers;
-	gettimeofday(&optional.config.time_start, NULL);
 	return (optional);
 }

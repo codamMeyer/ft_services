@@ -2,31 +2,31 @@
 #include <display.h>
 #include <unistd.h>
 
-long long	get_timestamp(void)
+t_time_ms	get_timestamp(void)
 {
+	const uint64_t	milli_factor = 1000;
 	struct timeval	time;
+	t_time_ms		timestamp;
 
 	gettimeofday(&time, NULL);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+	timestamp.value = (time.tv_sec * milli_factor) + (time.tv_usec / milli_factor);
+	return (timestamp);
 }
 
-uint64_t	get_cur_time(const struct timeval	*start)
+t_time_ms	get_timestamp_diff(t_time_ms start)
 {
-	const uint64_t	mult_value = 1000;
-	struct timeval	time_action;
+	const t_time_ms diff = {.value = get_timestamp().value - start.value};
 
-	gettimeofday(&time_action, NULL);
-	return ((time_action.tv_sec - start->tv_sec) * mult_value \
-		+ (time_action.tv_usec - start->tv_usec) * 0.001);
+	return (diff);
 }
 
 t_bool	is_dead(t_philo *philo)
 {
-	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
+	const t_time_ms	time_diff = get_timestamp_diff(philo->config->time_start);
 
-	if ((cur_time - philo->last_meal.value) > philo->config->time_to_die.value)
+	if ((time_diff.value - philo->last_meal.value) > philo->config->time_to_die.value)
 	{
-		display_action_message(cur_time, philo, DIED);
+		display_action_message(time_diff.value, philo, DIED);
 		philo->config->death_event = TRUE;
 		return (TRUE);
 	}
@@ -40,13 +40,6 @@ t_bool	is_dinner_over(t_philo *philo)
 	if (is_dead(philo) || philo->config->death_event)
 		return (TRUE);
 	return (FALSE);
-}
-
-void	sleep_one_ms(void)
-{
-	const t_time_ms	one_ms = {.value = 1};
-
-	sleep_ms(one_ms);
 }
 
 void	sleep_ms(t_time_ms sleep_ms)

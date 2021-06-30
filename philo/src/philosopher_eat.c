@@ -9,7 +9,7 @@ t_bool	get_forks(t_philo *philo)
 			pthread_mutex_lock(philo->forks.left->lock) == 0;
 		philo->forks.right->is_taken = \
 			pthread_mutex_lock(philo->forks.right->lock) == 0;
-		philo->last_meal.value = get_cur_time(&philo->config->time_start);
+		philo->last_meal = get_timestamp_diff(philo->config->time_start);
 		display_action_message(philo->last_meal.value, philo, HAS_TAKEN_A_FORK);
 		display_action_message(philo->last_meal.value, philo, HAS_TAKEN_A_FORK);
 		return (TRUE);
@@ -29,7 +29,7 @@ void	start_to_eat(t_philo *philo)
 {
 	display_action_message(philo->last_meal.value, philo, EATING);
 	sleep_ms(philo->config->time_to_eat);
-	philo->finished_eating.value = get_cur_time(&philo->config->time_start);
+	philo->finished_eating = get_timestamp_diff(philo->config->time_start);
 	drop_forks(&philo->forks);
 	if (philo->config->min_meals)
 	{

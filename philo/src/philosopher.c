@@ -51,8 +51,8 @@ t_philo	*create_philosophers(t_philo_config *config, \
 
 void	*start_dinner(void *philo)
 {
-	unsigned int	cur_time;
-	t_philo			*philosopher;
+	t_time_ms	cur_time;
+	t_philo		*philosopher;
 
 	philosopher = (t_philo *)philo;
 	while (!is_dinner_over(philosopher))
@@ -62,8 +62,8 @@ void	*start_dinner(void *philo)
 			start_to_eat(philosopher);
 			if (start_to_sleep(philosopher) == DEAD)
 			{
-				cur_time = get_cur_time(&(philosopher)->config->time_start);
-				display_action_message(cur_time, (philosopher), DIED);
+				cur_time = get_timestamp_diff((philosopher)->config->time_start);
+				display_action_message(cur_time.value, (philosopher), DIED);
 				break ;
 			}
 			start_to_think(philosopher);

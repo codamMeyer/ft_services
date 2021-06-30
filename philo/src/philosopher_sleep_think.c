@@ -34,7 +34,6 @@ static t_sleep_config	create_sleep_config(const t_philo *philo)
 
 t_life_status	start_to_sleep(t_philo *philo)
 {
-	// const unsigned int		cur_time = get_cur_time(&philo->config->time_start);
 	const t_sleep_config	sleep_config = create_sleep_config(philo);
 
 	if (philo->config->death_event)
@@ -52,7 +51,7 @@ t_life_status	start_to_sleep(t_philo *philo)
 
 void	start_to_think(t_philo *philo)
 {
-	const unsigned int	cur_time = get_cur_time(&philo->config->time_start);
+	const t_time_ms	cur_time = get_timestamp_diff(philo->config->time_start);
 
-	display_action_message(cur_time, philo, THINKING);
+	display_action_message(cur_time.value, philo, THINKING);
 }
