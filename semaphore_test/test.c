@@ -1,79 +1,93 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <semaphore.h>
-#include <pthread.h>
-#include <sys/stat.h>
-#include <semaphore.h>
-#include <sys/wait.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <semaphore.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
-#define WCONTINUED 8
-#define NUM_PHILO 4
-const char *semName = "testForks";
+#define SEM_NAME "/semaphore_example"
+#define SEM_PERMS (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
+#define INITIAL_VALUE 3
+#define ITERS 5
 
-typedef struct s_config
+int execl_child()
 {
-    int num_philo;
-    sem_t *forks_sem_id;
-}   t_config;
-
-typedef struct s_philo
-{
-    int         id;
-    pid_t       pid_id;
-	pthread_t   thread_id;
-    t_config    *config;
-}   t_philo;
-
-void get_forks(int id, sem_t *sem_id)
-{
-    sem_wait(sem_id);
-    sem_wait(sem_id);
-    printf("    %d Got forks\n", id);
-    printf("    %d eating\n", id);
-    usleep(900000);
-    sem_post(sem_id);
-    sem_post(sem_id);
-    printf("%d Dropped forks\n", id);
-}
-
-void child(int id, sem_t *sem_id)
-{
-    if (sem_id == SEM_FAILED){
-        perror("Child   : [sem_open] Failed\n"); return;        
+    sem_t *semaphore = sem_open(SEM_NAME, O_RDWR);
+    if (semaphore == SEM_FAILED) {
+        perror("child sem_open(3) failed");
+        exit(EXIT_FAILURE);
     }
-    printf("Child %d : started \n", id);
-    get_forks(id, sem_id);
+
+    int i;
+    for (i = 0; i < ITERS; i++) {
+        if (sem_wait(semaphore) < 0) {
+            perror("child sem_wait(3) failed on child");
+            continue;
+        }
+
+        printf("child PID %ld acquired semaphore\n", (long) getpid());
+        usleep(5000);
+        if (sem_post(semaphore) < 0) {
+            perror("child sem_post(3) error on child");
+        }
+        printf("child PID %ld released semaphore\n", (long) getpid());
+
+        sleep(1);
+    }
+
+    if (sem_close(semaphore) < 0)
+        perror("child sem_close(3) failed");
+
+    return 0;
 }
 
-int main()
-{
-    t_config config = {
-        .num_philo = NUM_PHILO,
-        .forks_sem_id = sem_open(semName, O_CREAT, 0600, NUM_PHILO),
-    };
 
-    sem_unlink(semName);
+int main(void) {
 
-    for (int i = 0; i < 3; i++)
-    {
-        pid_t pid;
-        pid = fork();
-        if (pid < 0){
-            perror("fork");
+    /* We initialize the semaphore counter to 1 (INITIAL_VALUE) */
+    if (sem_unlink(SEM_NAME) < 0)
+        perror("sem_unlink(3) failed");
+    sem_t *semaphore = sem_open(SEM_NAME, O_CREAT | O_EXCL, SEM_PERMS, INITIAL_VALUE);
+
+    if (semaphore == SEM_FAILED) {
+        perror("sem_open(3) error");
+        exit(EXIT_FAILURE);
+    }
+
+    /* Close the semaphore as we won't be using it in the parent process */
+    if (sem_close(semaphore) < 0) {
+        perror("sem_close(3) failed");
+        /* We ignore possible sem_unlink(3) errors here */
+        sem_unlink(SEM_NAME);
+        exit(EXIT_FAILURE);
+    }
+
+    pid_t pids[2];
+    size_t i;
+
+    for (i = 0; i < sizeof(pids)/sizeof(pids[0]); i++) {
+        if ((pids[i] = fork()) < 0) {
+            perror("fork(2) failed");
             exit(EXIT_FAILURE);
         }
-        if (pid == 0){
-            child(i, config.forks_sem_id);
-            printf("Child %d : Done\n", i);
-            break ;
+
+        if (pids[i] == 0) {
+            if (execl_child() < 0) {
+                perror("execl(2) failed");
+                exit(EXIT_FAILURE);
+            }
         }
-        else{
-            int status;
-            waitpid(pid, &status, WUNTRACED | WCONTINUED);
+        else if (pids[i] > 0)
+        {
+            if (waitpid(-1, NULL, 0) < 0)
+            {
+                printf("waitpid PID %ld\n", (long) getpid());
+                perror("waitpid(2) failed");
+            }    
         }
     }
-    sem_close(config.forks_sem_id);
+
     return 0;
 }
