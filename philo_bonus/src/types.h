@@ -1,12 +1,18 @@
 #ifndef TYPES_H
-# define TYPES_H
-# define TRUE 1
-# define FALSE 0
-# define NOT_SET 0
 # include <stdint.h>
 # include <sys/time.h>
 # include <pthread.h>
 # include <semaphore.h>
+# include <unistd.h>
+#include <sys/stat.h>
+# include <fcntl.h>
+# define TYPES_H
+# define TRUE 1
+# define FALSE 0
+# define NOT_SET 0
+# define SEM_NAME "/forks"
+# define SEM_PERMS (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
+# define SEM_FLAGS ( O_CREAT | O_EXCL)
 
 typedef int	t_bool;
 

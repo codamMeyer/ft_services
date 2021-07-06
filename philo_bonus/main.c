@@ -1,5 +1,28 @@
 #include <stdio.h>
 #include <parser.h>
+#include <dinner.h>
+#include <types.h>
+#include <semaphore.h>
+#include <stdlib.h>
+
+t_bool create_semaphore(int num_forks)
+{
+	if (sem_unlink(SEM_NAME) < 0)
+		perror("sem_unlink(3) failed");
+	sem_t *semaphore = sem_open(SEM_NAME, SEM_FLAGS, SEM_PERMS, num_forks);
+
+	if (semaphore == SEM_FAILED) {
+		perror("sem_open(3) error");
+		return (FALSE);
+	}
+
+	if (sem_close(semaphore) < 0) {
+		perror("sem_close(3) failed");
+		sem_unlink(SEM_NAME);
+		return (FALSE);
+	}
+	return (TRUE);
+}
 
 int	main(int argc, const char *argv[])
 {
@@ -18,6 +41,8 @@ int	main(int argc, const char *argv[])
 		printf("Invalid Number of Philosophers\n");
 		return (ERROR);
 	}
-	// ret = run(&optional.config);
+	if (!create_semaphore(optional.config.number_of_philosophers))
+		return (ERROR);
+	ret = run(&optional.config);
 	return (ret);
 }
