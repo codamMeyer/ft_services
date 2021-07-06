@@ -68,8 +68,7 @@ int create_philo_thread(t_philosopher *philo)
 
 int main(void)
 {
-	if (sem_unlink(SEM_NAME) < 0)
-		perror("sem_unlink(3) failed");
+	sem_unlink(SEM_NAME);
 	sem_t *semaphore = sem_open(SEM_NAME, SEM_FLAGS, SEM_PERMS, INITIAL_VALUE);
 
 	if (semaphore == SEM_FAILED) {

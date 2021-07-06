@@ -2,6 +2,7 @@
 #include <parser.h>
 #include <dinner.h>
 #include <types.h>
+#include <display.h>
 #include <semaphore.h>
 #include <stdlib.h>
 
@@ -21,6 +22,7 @@ t_bool create_semaphore(int num_forks)
 		sem_unlink(SEM_NAME);
 		return (FALSE);
 	}
+	create_display();
 	return (TRUE);
 }
 
@@ -32,8 +34,7 @@ int	main(int argc, const char *argv[])
 	optional = parse_config_args(argc, argv);
 	if (!optional.initialized)
 	{
-		// display_usage_message();
-		printf("Wrong args\n");
+		display_usage_message();
 		return (ERROR);
 	}
 	if (optional.config.number_of_philosophers < 2)
@@ -43,6 +44,8 @@ int	main(int argc, const char *argv[])
 	}
 	if (!create_semaphore(optional.config.number_of_philosophers))
 		return (ERROR);
+
+	optional.config.forks_available = optional.config.number_of_philosophers;
 	ret = run(&optional.config);
 	return (ret);
 }

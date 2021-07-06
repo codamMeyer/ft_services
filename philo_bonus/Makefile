@@ -11,11 +11,13 @@ PHILO_INCS=							\
 	src/types.h						\
 	src/time_utils.h				\
 	src/dinner.h					\
+	src/display.h					\
 
 PHILO_SRCS=							\
 	src/parser.c					\
 	src/time_utils.c				\
 	src/dinner.c					\
+	src/display.c					\
 
 
 TEST_FILES=							\

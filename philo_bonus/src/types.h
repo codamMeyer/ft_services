@@ -11,6 +11,7 @@
 # define FALSE 0
 # define NOT_SET 0
 # define SEM_NAME "/forks"
+# define DISPLAY_NAME "/display"
 # define SEM_PERMS (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
 # define SEM_FLAGS ( O_CREAT | O_EXCL)
 
@@ -37,6 +38,7 @@ typedef struct s_philo_config
 	int				min_meals;
 	int				need_to_finish_meals;
 	int				number_of_philosophers;
+	int				forks_available;
 	t_time_ms		time_start;
 	t_time_ms		time_to_die;
 	t_time_ms		time_to_eat;
@@ -54,6 +56,7 @@ typedef struct s_philo
 	t_time_ms				last_meal;
 	t_time_ms				finished_eating;
 	t_philo_config			*config;
+	t_display				display;
 }	t_philo;
 
 typedef struct s_optional_int
