@@ -43,7 +43,6 @@ void *start_dinner(void *philosopher)
 		printf("Philo %d started sleeping\n", philo->id);
 		usleep(500000);
 	}
-
 	if (sem_close(philo->sem) < 0)
 		perror("child sem_close(3) failed");
 
@@ -104,13 +103,10 @@ int main(void)
 	}
 
 	for (int j = 0; j < NUM_PHILO; j++) {
-		if (philosophers[i].pid_id > 0)
+		if (waitpid(-1, NULL, 0) < 0)
 		{
-			if (waitpid(-1, NULL, 0) < 0)
-			{
-				printf("waitpid PID %ld\n", (long) getpid());
-				perror("waitpid(2) failed");
-			}    
+			printf("waitpid PID %ld\n", (long) getpid());
+			perror("waitpid(2) failed");
 		}
 	}
 	return 0;
