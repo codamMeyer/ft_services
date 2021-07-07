@@ -1,6 +1,7 @@
 #include <time_utils.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <display.h>
 #include <time_utils.h>
 
 t_time_ms	get_timestamp(void)
@@ -30,7 +31,7 @@ t_bool	is_dead(t_philo *philo)
 
 	if (time_since_last_meal > philo->config->time_to_die.value)
 	{
-		// display_action_message(timestamp.value, philo, DIED);
+		display_action_message(timestamp.value, philo, DIED);
 		philo->config->death_event = TRUE;
 		return (TRUE);
 	}

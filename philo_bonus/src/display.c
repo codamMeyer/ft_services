@@ -8,8 +8,8 @@ t_display	create_display(void)
 {
 	t_display	display;
 
-	sem_unlink(SEM_NAME);
-	display.sem = sem_open(SEM_NAME, SEM_FLAGS, SEM_PERMS, 1);
+	sem_unlink(DISPLAY_NAME);
+	display.sem = sem_open(DISPLAY_NAME, SEM_FLAGS, SEM_PERMS, 1);
 	if (display.sem == SEM_FAILED)
 	{
 		perror("sem_open(3) error");
@@ -18,7 +18,7 @@ t_display	create_display(void)
 	if (sem_close(display.sem) < 0)
 	{
 		perror("sem_close(3) failed");
-		sem_unlink(SEM_NAME);
+		sem_unlink(DISPLAY_NAME);
 		exit(1);
 	}
 	return (display);

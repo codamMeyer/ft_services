@@ -25,6 +25,8 @@ t_philo	*create_philosophers(t_philo_config *config)
 		philosophers[i].config = config;
 		philosophers[i].id = i + 1;
 		philosophers[i].meals_counter = 0;
+		philosophers[i].last_meal.value = 0;
+		
 		++i;
 	}
 	return (philosophers);
@@ -32,29 +34,22 @@ t_philo	*create_philosophers(t_philo_config *config)
 
 t_bool	get_forks(t_philo *philo)
 {
-	printf("Philo %d num forks %d\n", philo->id, philo->config->forks_available);
-
-	if (philo->config->forks_available >= 2)
-	{
-		philo->config->forks_available -= 2;
-		sem_wait(philo->sem_id);
-		printf("Philo %d got a fork\n", philo->id);
-		sem_wait(philo->sem_id);
-		printf("Philo %d got a fork\n", philo->id);
-		return (TRUE);
-	}
-	return (FALSE);
+	sem_wait(philo->sem_id);
+	sem_wait(philo->sem_id);
+	philo->last_meal = get_timestamp_diff(philo->config->time_start);
+	display_action_message(philo->last_meal.value, philo, HAS_TAKEN_A_FORK);
+	display_action_message(philo->last_meal.value, philo, HAS_TAKEN_A_FORK);
+	display_action_message(philo->last_meal.value, philo, EATING);
+	return (TRUE);
 }
 
-static void	start_to_eat(t_philo *philo)
+void	start_to_eat(t_philo *philo)
 {
-	// display_action_message(philo->last_meal.value, philo, EATING);
 	sleep_ms(philo->config->time_to_eat);
 	philo->finished_eating = get_timestamp_diff(philo->config->time_start);
 	sem_post(philo->sem_id);
 	sem_post(philo->sem_id);
 	philo->config->forks_available += 2;
-
 	if (philo->config->min_meals)
 	{
 		++(philo->meals_counter);
@@ -62,8 +57,6 @@ static void	start_to_eat(t_philo *philo)
 			--(philo->config->need_to_finish_meals);
 	}
 }
-
-
 
 typedef struct s_sleep_config
 {
@@ -91,8 +84,7 @@ static t_sleep_config	create_sleep_config(const t_philo *philo)
 	t_sleep_config		sleep_config;
 
 	sleep_config.will_die = wakeup_time > starvation_time;
-	sleep_config.time_to_sleep.value = time_to_sleep - \
-										(wakeup_time - time_to_sleep);
+	sleep_config.time_to_sleep.value = (time_to_sleep - (wakeup_time - time_to_sleep)) * -1;
 	return (sleep_config);
 }
 
@@ -102,7 +94,7 @@ t_life_status	start_to_sleep(t_philo *philo)
 
 	if (philo->config->death_event)
 		return (DEAD);
-	// display_action_message(philo->finished_eating.value, philo, SLEEPING);
+	display_action_message(philo->finished_eating.value, philo, SLEEPING);
 	if (sleep_config.will_die)
 	{
 		sleep_ms(sleep_config.time_to_sleep);
@@ -116,8 +108,7 @@ t_life_status	start_to_sleep(t_philo *philo)
 void start_to_think(t_philo *philo)
 {
 	const t_time_ms	timestamp = get_timestamp_diff(philo->config->time_start);
-	(void)timestamp;
-	// display_action_message(timestamp.value, philo, THINKING);
+	display_action_message(timestamp.value, philo, THINKING);
 }
 
 
@@ -128,32 +119,19 @@ void *start_dinner(void *philosopher)
 	t_time_ms	timestamp;
 
 	philo = (t_philo *)philosopher;
-	while (i++ < 5)
+	while (i++ < 3)
 	{
 		if (get_forks(philo))
 		{
 			start_to_eat(philo);
 			if (start_to_sleep(philo) == DEAD)
 			{
-				timestamp = \
-					get_timestamp_diff((philo)->config->time_start);
-				printf("time: %ld\n", timestamp.value);
-				// display_action_message(timestamp.value, (philo), DIED);
-				break ;
+				timestamp = get_timestamp_diff((philo)->config->time_start);
+				display_action_message(timestamp.value, philo, DIED);
+				exit(DEATH_EVENT);
 			}
 			start_to_think(philo);
 		}
-
-		// if (sem_wait(philo->sem_id) == 0)
-		// {
-		// 	printf("Philo %d got a fork\n", philo->id);
-		// 	printf("Philo %d got a fork\n", philo->id);
-		// 	printf("Philo %d is eating\n", philo->id);
-		// 	usleep(philo->config->time_to_eat.value * 1000);
-		// 	sem_post(philo->sem_id);
-		// 	printf("Philo %d started sleeping\n", philo->id);
-		// 	usleep(philo->config->time_to_sleep.value * 1000);
-		// }
 	}
 	if (sem_close(philo->sem_id) < 0)
 		perror("sem_close(3) failed");
@@ -165,7 +143,8 @@ int create_philo_thread(t_philo *philo)
 	int ret;
 	philo->sem_id = sem_open(SEM_NAME, O_RDWR);
 	philo->display.sem = sem_open(DISPLAY_NAME, O_RDWR);
-	if (philo->sem_id == SEM_FAILED) {
+	if (philo->sem_id == SEM_FAILED)
+	{
 		perror("sem_open(3) failed");
 		exit(EXIT_FAILURE);
 	}
@@ -238,6 +217,7 @@ t_status	run(t_philo_config *config)
 	philosophers = NULL;
 	if (malloc_resources(config, &philosophers) == ERROR)
 		return (ERROR);
+	philosophers->config->time_start = get_timestamp();
 	create_processes(philosophers);
 	if (config->death_event)
 		ret = DEATH_EVENT;
