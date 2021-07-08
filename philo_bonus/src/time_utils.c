@@ -40,9 +40,7 @@ t_bool	is_dead(t_philo *philo)
 
 t_bool	is_dinner_over(t_philo *philo)
 {
-	if (philo->config->min_meals && philo->config->need_to_finish_meals == 0)
-		return (TRUE);
-	if (is_dead(philo) || philo->config->death_event)
+	if (philo->config->min_meals && (philo->meals_counter == philo->config->min_meals))
 		return (TRUE);
 	return (FALSE);
 }

@@ -80,11 +80,11 @@ static t_sleep_config	create_sleep_config(const t_philo *philo)
 {
 	const unsigned int	wakeup_time = get_wakeup_time(philo);
 	const unsigned int	starvation_time = get_starvation_time(philo);
-	const uint64_t		time_to_sleep = philo->config->time_to_sleep.value;
+	const t_time_ms		timestamp = get_timestamp_diff(philo->config->time_start);
 	t_sleep_config		sleep_config;
 
 	sleep_config.will_die = wakeup_time > starvation_time;
-	sleep_config.time_to_sleep.value = (time_to_sleep - (wakeup_time - time_to_sleep)) * -1;
+	sleep_config.time_to_sleep.value = starvation_time - timestamp.value;
 	return (sleep_config);
 }
 
@@ -108,18 +108,18 @@ t_life_status	start_to_sleep(t_philo *philo)
 void start_to_think(t_philo *philo)
 {
 	const t_time_ms	timestamp = get_timestamp_diff(philo->config->time_start);
+	
 	display_action_message(timestamp.value, philo, THINKING);
 }
 
 
 void *start_dinner(void *philosopher)
 {
-	int i = 0;
 	t_philo *philo;
 	t_time_ms	timestamp;
 
 	philo = (t_philo *)philosopher;
-	while (i++ < 3)
+	while (!is_dinner_over(philo))
 	{
 		if (get_forks(philo))
 		{
