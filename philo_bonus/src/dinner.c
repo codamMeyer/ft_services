@@ -186,15 +186,17 @@ static void	create_processes(t_philo *philosophers)
 static	void wait_processes(int num_philo)
 {
 	int i;
+	int ret;
 
 	i = 0;
 	while (i < num_philo)
 	{
-		if (waitpid(-1, NULL, 0) < 0)
+		if (waitpid(-1, &ret, 0) < 0)
 		{
 			printf("waitpid PID %ld\n", (long) getpid());
 			perror("waitpid(2) failed");
 		}
+		printf("ret: %d \n", ret);
 		i++;
 	}
 }
