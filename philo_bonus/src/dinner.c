@@ -39,12 +39,12 @@ t_bool	get_forks(t_philo *philo)
 	philo->last_meal = get_timestamp_diff(philo->config->time_start);
 	display_action_message(philo->last_meal.value, philo, HAS_TAKEN_A_FORK);
 	display_action_message(philo->last_meal.value, philo, HAS_TAKEN_A_FORK);
-	display_action_message(philo->last_meal.value, philo, EATING);
 	return (TRUE);
 }
 
 void	start_to_eat(t_philo *philo)
 {
+	display_action_message(philo->last_meal.value, philo, EATING);
 	sleep_ms(philo->config->time_to_eat);
 	philo->finished_eating = get_timestamp_diff(philo->config->time_start);
 	sem_post(philo->sem_id);
@@ -112,6 +112,31 @@ void start_to_think(t_philo *philo)
 	display_action_message(timestamp.value, philo, THINKING);
 }
 
+void	*check_for_death(void *void_philosopher)
+{
+	t_philo	*philo;
+	t_philo_config *config;
+
+	philo = (t_philo *)void_philosopher;
+	config = philo->config;
+	while (TRUE)
+	{
+        t_time_ms now = get_timestamp_diff(config->time_start);
+		if ((now.value - philo->last_meal.value) > config->time_to_die.value)
+		{
+            display_action_message(now.value, philo, DIED);
+            config->death_event = TRUE;
+			exit(1);
+		}
+		if (philo->config->death_event)
+			break ;
+		usleep(1000);
+		if (philo->meals_counter >= config->min_meals && config->min_meals != NOT_SET)
+			break ;
+	}
+	return (NULL);
+}
+
 
 void *start_dinner(void *philosopher)
 {
@@ -140,7 +165,6 @@ void *start_dinner(void *philosopher)
 
 int create_philo_thread(t_philo *philo)
 {
-	int ret;
 	philo->sem_id = sem_open(SEM_NAME, O_RDWR);
 	philo->display.sem = sem_open(DISPLAY_NAME, O_RDWR);
 	if (philo->sem_id == SEM_FAILED)
@@ -148,13 +172,22 @@ int create_philo_thread(t_philo *philo)
 		perror("sem_open(3) failed");
 		exit(EXIT_FAILURE);
 	}
-	ret = pthread_create(&(philo->thread_id), NULL, &start_dinner, philo);
-	if (ret)
+    philo->last_meal = get_timestamp_diff(philo->config->time_start);
+	pthread_create(&(philo->thread_id), NULL, &check_for_death, philo);
+    if (philo->id % 2)
+		usleep(15000);
+    while (!(philo->config->death_event))
 	{
-		printf("Error\n");
-		exit(1);
-	}
-	pthread_join(philo->thread_id, NULL);
+		get_forks(philo);
+        start_to_eat(philo);
+        if (philo->meals_counter >= philo->config->min_meals && philo->config->min_meals != NOT_SET)
+			break ;
+        start_to_sleep(philo);
+        start_to_think(philo);
+    }
+    pthread_join(philo->thread_id, NULL);
+	if (philo->config->death_event)
+    	exit(1);
 	exit(0);
 	return 0;
 }
@@ -172,8 +205,9 @@ static void	create_processes(t_philo *philosophers)
 			exit(EXIT_FAILURE);
 		}
 
-		if (pid == 0) {
-			if (create_philo_thread(&philosophers[i]) < 0) {
+		if (pid == 0)
+        {
+        	if (create_philo_thread(&philosophers[i]) < 0) {
 				perror("execl(2) failed");
 				exit(EXIT_FAILURE);
 			}
@@ -196,7 +230,7 @@ static	void wait_processes(int num_philo)
 			printf("waitpid PID %ld\n", (long) getpid());
 			perror("waitpid(2) failed");
 		}
-		printf("ret: %d \n", ret);
+		// printf("ret: %d \n", ret);
 		i++;
 	}
 }
