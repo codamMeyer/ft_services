@@ -153,7 +153,7 @@ void *start_dinner(void *philosopher)
 			{
 				timestamp = get_timestamp_diff((philo)->config->time_start);
 				display_action_message(timestamp.value, philo, DIED);
-				exit(DEATH_EVENT);
+				exit(1);
 			}
 			start_to_think(philo);
 		}
@@ -185,27 +185,26 @@ int create_philo_thread(t_philo *philo)
         start_to_sleep(philo);
         start_to_think(philo);
     }
+	int ret = philo->config->death_event;
     pthread_join(philo->thread_id, NULL);
-	if (philo->config->death_event)
-    	exit(1);
-	exit(0);
-	return 0;
+	exit(ret);
 }
 
 static void	create_processes(t_philo *philosophers)
 {
 	int		i;
-	pid_t	pid;
 
 	i = 0;
 	while (i < philosophers->config->number_of_philosophers)
 	{
-		if ((pid = fork()) < 0) {
+        philosophers[i].pid = fork();
+		if (philosophers[i].pid < 0) {
+
 			perror("fork(2) failed");
 			exit(EXIT_FAILURE);
 		}
 
-		if (pid == 0)
+		if (philosophers[i].pid == 0)
         {
         	if (create_philo_thread(&philosophers[i]) < 0) {
 				perror("execl(2) failed");
@@ -217,20 +216,27 @@ static void	create_processes(t_philo *philosophers)
 	}
 }
 
-static	void wait_processes(int num_philo)
+static	void wait_processes(t_philo *philosophers, int num_philo)
 {
 	int i;
+	int j;
 	int ret;
 
 	i = 0;
 	while (i < num_philo)
 	{
-		if (waitpid(-1, &ret, 0) < 0)
+		waitpid(-1, &ret, 0);
+		
+		if (ret != 0)
 		{
-			printf("waitpid PID %ld\n", (long) getpid());
-			perror("waitpid(2) failed");
+			j = 0;
+			while (j < num_philo)
+			{
+				kill(philosophers[j].pid, 15);
+				++j;
+			}
+			break ;
 		}
-		// printf("ret: %d \n", ret);
 		i++;
 	}
 }
@@ -257,7 +263,7 @@ t_status	run(t_philo_config *config)
 	create_processes(philosophers);
 	if (config->death_event)
 		ret = DEATH_EVENT;
-	wait_processes(config->number_of_philosophers);
+	wait_processes(philosophers, config->number_of_philosophers);
 	cleanup(philosophers);
 	return (ret);
 }

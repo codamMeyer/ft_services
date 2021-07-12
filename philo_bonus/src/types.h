@@ -52,6 +52,7 @@ typedef struct s_philo
 	int						id;
 	pthread_t				thread_id;
 	sem_t					*sem_id;
+	pid_t					pid;
 	int						meals_counter;
 	t_time_ms				last_meal;
 	t_time_ms				finished_eating;
