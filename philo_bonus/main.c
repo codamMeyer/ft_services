@@ -45,7 +45,6 @@ int	main(int argc, const char *argv[])
 	if (!create_semaphore(optional.config.number_of_philosophers))
 		return (ERROR);
 
-	optional.config.forks_available = optional.config.number_of_philosophers;
 	ret = run(&optional.config);
 	return (ret);
 }

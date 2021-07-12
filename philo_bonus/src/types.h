@@ -14,6 +14,7 @@
 # define DISPLAY_NAME "/display"
 # define SEM_PERMS (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
 # define SEM_FLAGS ( O_CREAT | O_EXCL)
+#define ANY_CHILD -1
 
 typedef int	t_bool;
 
@@ -38,13 +39,11 @@ typedef struct s_philo_config
 	int				min_meals;
 	int				need_to_finish_meals;
 	int				number_of_philosophers;
-	int				forks_available;
 	t_time_ms		time_start;
 	t_time_ms		time_to_die;
 	t_time_ms		time_to_eat;
 	t_time_ms		time_to_sleep;
 	t_bool			death_event;
-	int				initialized_threads;
 }	t_philo_config;
 
 typedef struct s_philo
