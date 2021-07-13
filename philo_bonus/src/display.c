@@ -4,24 +4,20 @@
 #include <stdlib.h>
 #include <time_utils.h>
 
-t_display	create_display(void)
+t_bool	create_display_semaphore(void)
 {
-	t_display	display;
+	sem_t *semaphore;
 
 	sem_unlink(DISPLAY_NAME);
-	display.sem = sem_open(DISPLAY_NAME, SEM_FLAGS, SEM_PERMS, 1);
-	if (display.sem == SEM_FAILED)
+	semaphore = sem_open(DISPLAY_NAME, SEM_FLAGS, SEM_PERMS, 1);
+	if (semaphore == SEM_FAILED)
+		return (FALSE);
+	if (sem_close(semaphore) < 0)
 	{
-		perror("sem_open(3) error");
-		exit(1);
-	}
-	if (sem_close(display.sem) < 0)
-	{
-		perror("sem_close(3) failed");
 		sem_unlink(DISPLAY_NAME);
-		exit(1);
+		return (FALSE);
 	}
-	return (display);
+	return (TRUE);
 }
 
 void	display_usage_message(void)

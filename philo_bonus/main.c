@@ -6,23 +6,28 @@
 #include <semaphore.h>
 #include <stdlib.h>
 
-t_bool create_semaphore(int num_forks)
+t_bool	create_forks_semaphore(int num_forks)
 {
-	if (sem_unlink(SEM_NAME) < 0)
-		perror("sem_unlink(3) failed");
-	sem_t *semaphore = sem_open(SEM_NAME, SEM_FLAGS, SEM_PERMS, num_forks);
+	sem_t	*semaphore;
 
-	if (semaphore == SEM_FAILED) {
-		perror("sem_open(3) error");
+	sem_unlink(SEM_NAME);
+	semaphore = sem_open(SEM_NAME, SEM_FLAGS, SEM_PERMS, num_forks);
+	if (semaphore == SEM_FAILED)
 		return (FALSE);
-	}
-
-	if (sem_close(semaphore) < 0) {
-		perror("sem_close(3) failed");
+	if (sem_close(semaphore) < 0)
+	{
 		sem_unlink(SEM_NAME);
 		return (FALSE);
 	}
-	create_display();
+	return (TRUE);
+}
+
+t_bool	create_semaphore(int num_forks)
+{
+	if (!create_forks_semaphore(num_forks))
+		return (FALSE);
+	if (!create_display_semaphore())
+		return (FALSE);
 	return (TRUE);
 }
 
@@ -44,7 +49,6 @@ int	main(int argc, const char *argv[])
 	}
 	if (!create_semaphore(optional.config.number_of_philosophers))
 		return (ERROR);
-
 	ret = run(&optional.config);
 	return (ret);
 }

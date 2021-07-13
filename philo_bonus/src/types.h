@@ -9,6 +9,7 @@
 # define TYPES_H
 # define TRUE 1
 # define FALSE 0
+# define FALSE 0
 # define NOT_SET 0
 # define SEM_NAME "/forks"
 # define DISPLAY_NAME "/display"
@@ -80,8 +81,8 @@ typedef enum e_life_status
 typedef enum e_status
 {
 	SUCCESS = 0,
+	ERROR = 1,
 	DEATH_EVENT = 2,
-	ERROR = 3,
 }	t_status;
 
 #endif
