@@ -1,5 +1,4 @@
 PHILO=philo_bonus
-TEST_NAME=$(PHILO)_test
 CC=gcc
 CFLAGS=-Wall -Wextra -Werror -O3 -ggdb3 -fsanitize=address
 TEST_CFLAGS=$(CFLAGS)
@@ -35,15 +34,8 @@ $(PHILO): $(PHILO_OBJS)
 %.o: %.c $(PHILO_INCS)
 	@$(CC) $(CFLAGS) $(INC_PATH) -c -o $@ $<
 
-test_run: test
-	./$(TEST_NAME)
-	@../run_norminette.sh
-
 test_integration: $(PHILO)
 	./tests/integration_test.py
-
-test: $(PHILO_OBJS) $(TEST_FILES)
-	$(CC) $(TEST_CFLAGS) $(INC_PATH) $(PHILO_OBJS) $(TEST_FILES) -o $(TEST_NAME) $(LDFLAGS)
 
 clean:
 	rm -f $(PHILO_OBJS)
@@ -52,7 +44,6 @@ re: fclean all
 
 fclean: clean
 	rm -f $(PHILO)
-	rm -f $(TEST_NAME)
 	rm -f norminette_result
 
 .PHONY: all clean fclean re test libftprintf

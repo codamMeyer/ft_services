@@ -21,4 +21,9 @@ jobs:
       - run:
           name: Integration-Test Philo
           command: 'cd philo && make test_integration'
-          
+      - run:
+          name: Build Philo Bonus
+          command: 'cd philo_bonus && make'
+      - run:
+          name: Integration-Test Philo Bonus
+          command: 'cd philo_bonus && make test_integration'
