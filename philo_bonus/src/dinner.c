@@ -11,7 +11,9 @@ static void	cleanup(t_philo *philosophers)
 	free(philosophers);
 }
 
-static void setup_philosopher(t_philo *philosopher, t_philo_config *config, int id)
+static void	setup_philosopher(t_philo *philosopher, \
+								t_philo_config *config, \
+								int id)
 {
 	philosopher->config = config;
 	philosopher->id = id;
@@ -89,7 +91,8 @@ static t_sleep_config	create_sleep_config(const t_philo *philo)
 {
 	const unsigned int	wakeup_time = get_wakeup_time(philo);
 	const unsigned int	starvation_time = get_starvation_time(philo);
-	const t_time_ms		timestamp = get_timestamp_diff(philo->config->time_start);
+	const t_time_ms		timestamp = \
+						get_timestamp_diff(philo->config->time_start);
 	t_sleep_config		sleep_config;
 
 	sleep_config.will_die = wakeup_time > starvation_time;
@@ -114,31 +117,34 @@ t_life_status	start_to_sleep(t_philo *philo)
 	return (ALIVE);
 }
 
-void start_to_think(t_philo *philo)
+void	start_to_think(t_philo *philo)
 {
 	const t_time_ms	timestamp = get_timestamp_diff(philo->config->time_start);
-	
+
 	display_action_message(timestamp.value, philo, THINKING);
 }
 
-static t_bool has_finished_min_meals(const t_philo *philo)
+static t_bool	has_finished_min_meals(const t_philo *philo)
 {
-	return (philo->meals_counter >= philo->config->min_meals && philo->config->min_meals != NOT_SET);
+	return (philo->meals_counter >= philo->config->min_meals \
+			&& philo->config->min_meals != NOT_SET);
 }
 
 void	*check_for_death(void *void_philosopher)
 {
-	t_philo	*philo;
-	t_time_ms timestamp;
+	t_philo		*philo;
+	t_time_ms	timestamp;
+	uint64_t	time_since_last_meal;
 
 	philo = (t_philo *)void_philosopher;
 	while (TRUE)
 	{
-        timestamp = get_timestamp_diff(philo->config->time_start);
-		if ((timestamp.value - philo->last_meal.value) > philo->config->time_to_die.value)
+		timestamp = get_timestamp_diff(philo->config->time_start);
+		time_since_last_meal = (timestamp.value - philo->last_meal.value);
+		if (time_since_last_meal > philo->config->time_to_die.value)
 		{
-            display_action_message(timestamp.value, philo, DIED);
-            philo->config->death_event = TRUE;
+			display_action_message(timestamp.value, philo, DIED);
+			philo->config->death_event = TRUE;
 			exit(EXIT_FAILURE);
 		}
 		usleep(1000);
@@ -148,7 +154,7 @@ void	*check_for_death(void *void_philosopher)
 	return (NULL);
 }
 
-static void open_semaphores(t_philo *philo)
+static void	open_semaphores(t_philo *philo)
 {
 	philo->sem_id = sem_open(SEM_NAME, O_RDWR);
 	philo->display.sem = sem_open(DISPLAY_NAME, O_RDWR);
@@ -159,24 +165,24 @@ static void open_semaphores(t_philo *philo)
 	}
 }
 
-static void start_dinner(t_philo *philo)
+static void	start_dinner(t_philo *philo)
 {
 	if (philo->id % 2)
 		usleep(15000);
 	while (!is_dinner_over(philo))
 	{
-        start_to_eat(philo);
-        start_to_sleep(philo);
-        start_to_think(philo);
-    }
+		start_to_eat(philo);
+		start_to_sleep(philo);
+		start_to_think(philo);
+	}
 }
 
-void create_philo_thread(t_philo *philo)
+void	create_philo_thread(t_philo *philo)
 {
 	open_semaphores(philo);
 	pthread_create(&(philo->thread_id), NULL, &check_for_death, philo);
-    start_dinner(philo);
-    pthread_join(philo->thread_id, NULL);
+	start_dinner(philo);
+	pthread_join(philo->thread_id, NULL);
 	exit(philo->config->death_event);
 }
 
@@ -187,25 +193,24 @@ static void	create_processes(t_philo *philosophers)
 	i = 0;
 	while (i < philosophers->config->number_of_philosophers)
 	{
-        philosophers[i].pid = fork();
+		philosophers[i].pid = fork();
 		if (philosophers[i].pid < 0)
 		{
 			printf("fork(2) failed");
 			exit(EXIT_FAILURE);
 		}
-
 		if (philosophers[i].pid == 0)
-        {
-        	create_philo_thread(&philosophers[i]);
+		{
+			create_philo_thread(&philosophers[i]);
 			break ;
 		}
 		++i;
 	}
 }
 
-static void kill_all_processes(t_philo *philosophers, int num_philo)
+static void	kill_all_processes(t_philo *philosophers, int num_philo)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < num_philo)
@@ -215,16 +220,15 @@ static void kill_all_processes(t_philo *philosophers, int num_philo)
 	}
 }
 
-static	void wait_processes(t_philo *philosophers, int num_philo)
+static void	wait_processes(t_philo *philosophers, int num_philo)
 {
-	int i;
-	int ret;
+	int	i;
+	int	ret;
 
 	i = 0;
 	while (i < num_philo)
 	{
 		waitpid(ANY_CHILD, &ret, 0);
-		
 		if (ret != 0)
 		{
 			kill_all_processes(philosophers, num_philo);

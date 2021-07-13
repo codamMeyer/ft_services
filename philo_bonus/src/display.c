@@ -6,10 +6,11 @@
 
 t_bool	create_display_semaphore(void)
 {
-	sem_t *semaphore;
+	sem_t	*semaphore;
 
 	sem_unlink(DISPLAY_NAME);
-	semaphore = sem_open(DISPLAY_NAME, SEM_FLAGS, SEM_PERMS, 1);
+	semaphore = sem_open(DISPLAY_NAME, (O_CREAT | O_EXCL), \
+				(S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), 1);
 	if (semaphore == SEM_FAILED)
 		return (FALSE);
 	if (sem_close(semaphore) < 0)

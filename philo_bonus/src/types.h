@@ -4,7 +4,7 @@
 # include <pthread.h>
 # include <semaphore.h>
 # include <unistd.h>
-#include <sys/stat.h>
+# include <sys/stat.h>
 # include <fcntl.h>
 # define TYPES_H
 # define TRUE 1
@@ -13,9 +13,7 @@
 # define NOT_SET 0
 # define SEM_NAME "/forks"
 # define DISPLAY_NAME "/display"
-# define SEM_PERMS (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)
-# define SEM_FLAGS ( O_CREAT | O_EXCL)
-#define ANY_CHILD -1
+# define ANY_CHILD -1
 
 typedef int	t_bool;
 
