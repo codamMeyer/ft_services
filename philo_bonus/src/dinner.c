@@ -220,7 +220,7 @@ static void	kill_all_processes(t_philo *philosophers, int num_philo)
 	}
 }
 
-static void	wait_processes(t_philo *philosophers, int num_philo)
+static t_status	wait_processes(t_philo *philosophers, int num_philo)
 {
 	int	i;
 	int	ret;
@@ -232,21 +232,24 @@ static void	wait_processes(t_philo *philosophers, int num_philo)
 		if (ret != 0)
 		{
 			kill_all_processes(philosophers, num_philo);
+			ret = DEATH_EVENT;
 			break ;
 		}
 		++i;
 	}
+	return (ret);
 }
 
 t_status	run(t_philo_config *config)
 {
 	t_philo		*philosophers;
+	t_status	ret;
 
 	philosophers = create_philosophers(config);
 	if (!philosophers)
 		return (ERROR);
 	create_processes(philosophers);
-	wait_processes(philosophers, config->number_of_philosophers);
+	ret = wait_processes(philosophers, config->number_of_philosophers);
 	cleanup(philosophers);
-	return (SUCCESS);
+	return (ret);
 }
