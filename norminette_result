@@ -1,8 +1,0 @@
-tests/main.c: Error!
-Error: INCLUDE_START_FILE   (line:   4, col:   1):	Include must be at the start of file
-Error: INCLUDE_START_FILE   (line:   5, col:   1):	Include must be at the start of file
-Error: SPACE_BEFORE_FUNC    (line:   7, col:   4):	space before function name
-Error: RETURN_PARENTHESIS   (line:  10, col:  12):	Return value must be in parenthesis
-Error: BRACE_SHOULD_EOL     (line:  11, col:   1):	Expected newline after brace
-tests/ctest.h: Error!
-	[31mUnrecognized token line 44, col 78[0m

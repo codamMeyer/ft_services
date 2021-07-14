@@ -45,6 +45,7 @@ $(PHILO): $(PHILO_OBJS)
 
 test_integration: $(PHILO)
 	./tests/integration_test.py
+	@../run_norminette.sh
 
 clean:
 	rm -f $(PHILO_OBJS)
