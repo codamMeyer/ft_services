@@ -11,7 +11,8 @@ t_bool	create_forks_semaphore(int num_forks)
 	sem_t	*semaphore;
 
 	sem_unlink(SEM_NAME);
-	semaphore = sem_open(SEM_NAME, ( O_CREAT | O_EXCL), (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), num_forks);
+	semaphore = sem_open(SEM_NAME, (O_CREAT | O_EXCL),
+			(S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP), num_forks);
 	if (semaphore == SEM_FAILED)
 		return (FALSE);
 	if (sem_close(semaphore) < 0)
