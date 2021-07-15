@@ -1,3 +1,4 @@
+#include "types.h"
 #include <display.h>
 #include <stdio.h>
 #include <types.h>
@@ -30,6 +31,7 @@ void	display_usage_message(void)
 
 void	display_action_message(long int time, t_philo *philo, t_action action)
 {
+	static t_bool		death = FALSE;
 	const t_time_ms		wait_time = {.value = 0.0001};
 	static const char	*action_str[5] = {
 												"is eating         🍝",
@@ -41,13 +43,13 @@ void	display_action_message(long int time, t_philo *philo, t_action action)
 
 	while (philo->display->is_used && !philo->config->death_event)
 		sleep_ms(wait_time);
-	if (!philo->display->is_used)
+	if (!philo->display->is_used && !death)
 	{
+		death = (action == DIED);
 		philo->display->is_used = \
 								pthread_mutex_lock(philo->display->lock) == 0;
 		printf("%6ldms philo %3d %s |\n", time, philo->id, action_str[action]);
 		pthread_mutex_unlock(philo->display->lock);
-		if (action != DIED)
-			philo->display->is_used = FALSE;
+		philo->display->is_used = FALSE;
 	}
 }

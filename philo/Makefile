@@ -60,6 +60,6 @@ re: fclean all
 fclean: clean
 	rm -f $(PHILO)
 	rm -f $(TEST_NAME)
-	rm -f ../norminette_result
+	rm -f norminette_result
 
 .PHONY: all clean fclean re test libftprintf

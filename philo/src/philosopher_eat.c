@@ -1,3 +1,5 @@
+#include "types.h"
+#include <display.h>
 #include <philosopher.h>
 #include <time_utils.h>
 

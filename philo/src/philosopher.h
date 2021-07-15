@@ -1,6 +1,6 @@
 #ifndef PHILOSOPHER_H
 # define PHILOSOPHER_H
-# include <types.h>
+# include "types.h"
 # include <display.h>
 # include <pthread.h>
 # include <fork.h>

@@ -1,6 +1,8 @@
 #include <stdlib.h>
-#include <philosopher.h>
+#include "types.h"
+#include "display.h"
 #include <dinner.h>
+#include "philosopher.h"
 #include <time_utils.h>
 
 static void	cleanup(t_fork *forks, t_philo *philosophers, t_display *display)
