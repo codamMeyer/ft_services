@@ -48,7 +48,7 @@ void	display_action_message(long int time, t_philo *philo, t_action action)
 		death = (action == DIED);
 		philo->display->is_used = \
 								pthread_mutex_lock(philo->display->lock) == 0;
-		printf("%6ldms philo %3d %s |\n", time, philo->id, action_str[action]);
+		printf("%6ldms philo %3d %s\n", time, philo->id, action_str[action]);
 		pthread_mutex_unlock(philo->display->lock);
 		philo->display->is_used = FALSE;
 	}

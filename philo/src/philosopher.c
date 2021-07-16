@@ -52,13 +52,12 @@ t_philo	*create_philosophers(t_philo_config *config, \
 
 void	*start_dinner(void *philo)
 {
-	const t_time_ms	wait_time = {.value = 1500};
 	t_time_ms		timestamp;
 	t_philo			*philosopher;
 
 	philosopher = (t_philo *)philo;
 	if (philosopher->id % 2)
-		sleep_ms(wait_time);
+		sleep_ms(philosopher->config->time_to_eat);
 	while (!is_dinner_over(philosopher))
 	{
 		if (get_forks(philosopher))

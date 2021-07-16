@@ -30,7 +30,6 @@ static t_sleep_config	create_sleep_config(const t_philo *philo)
 	sleep_config.will_die = wakeup_time > starvation_time;
 	sleep_config.time_to_sleep.value = time_to_sleep - \
 										(wakeup_time - time_to_sleep);
-
 	if ((int)sleep_config.time_to_sleep.value < 0)
 		sleep_config.time_to_sleep.value = 0;
 	return (sleep_config);
@@ -58,7 +57,7 @@ void	start_to_think(t_philo *philo)
 	const t_time_ms	timestamp = get_timestamp_diff(philo->config->time_start);
 	t_time_ms		time;
 
-	time.value = 0.9;
+	time.value = 2;
 	display_action_message(timestamp.value, philo, THINKING);
 	sleep_ms(time);
 }
