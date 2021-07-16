@@ -6,7 +6,6 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <philosopher.h>
-
 #include <death.h>
 
 static void	create_processes(t_philo *philosophers)
@@ -18,10 +17,7 @@ static void	create_processes(t_philo *philosophers)
 	{
 		philosophers[i].pid = fork();
 		if (philosophers[i].pid < 0)
-		{
-			printf("fork(2) failed");
 			exit(EXIT_FAILURE);
-		}
 		if (philosophers[i].pid == 0)
 		{
 			create_philo_thread(&philosophers[i]);

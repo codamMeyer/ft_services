@@ -40,5 +40,6 @@ void	display_action_message(long int time, t_philo *philo, t_action action)
 
 	sem_wait(philo->display.sem);
 	printf("%6ldms philo %3d %s |\n", time, philo->id, action_str[action]);
-	sem_post(philo->display.sem);
+	if (action != DIED)
+		sem_post(philo->display.sem);
 }

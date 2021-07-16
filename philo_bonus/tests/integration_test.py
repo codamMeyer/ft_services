@@ -94,6 +94,7 @@ class GoodParameters:
 
     def _testWithMinMeals(self):
         self._runInput("No philosopher should die", "4 410 200 200 5")
+        self._runInput("No philosopher should die", "3 310 100 100 10")
 
     def runTests(self):
         printTestBanner(self.name)
