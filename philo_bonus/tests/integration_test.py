@@ -20,8 +20,8 @@ RESULT_FAIL = "{}[FAIL]{}".format(LIGHT_RED, RESET)
 
 class Status(IntEnum):
     OK = 0
+    ERROR = 1
     DEATH = 2
-    ERROR = 3
 
     @classmethod
     def print(cls, expected):
@@ -40,6 +40,7 @@ class Status(IntEnum):
         else:
             print("\n{}{}{}".format(LIGHT_YELLOW, testName, RESET), end=" ")
             print(RESULT_FAIL)
+            assert (False)
 
 
 def printTestBanner(testName):
