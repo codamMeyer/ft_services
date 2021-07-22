@@ -40,6 +40,7 @@ class Status(IntEnum):
         else:
             print("\n{}{}{}".format(LIGHT_YELLOW, testName, RESET), end=" ")
             print(RESULT_FAIL)
+            assert False
 
 
 def printTestBanner(testName):
