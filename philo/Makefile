@@ -1,7 +1,7 @@
 PHILO=philo
 TEST_NAME=$(PHILO)_test
-CC=gcc
-CFLAGS=-Wall -Wextra -Werror -O3 -ggdb3 -fsanitize=leak -fsanitize=address
+CC=clang
+CFLAGS=-Wall -Wextra -Werror -O2
 TEST_CFLAGS=$(CFLAGS)
 INC_PATH=-I./src
 LDFLAGS=-lpthread
@@ -37,7 +37,7 @@ PHILO_OBJS=$(PHILO_SRCS:.c=.o)
 all: $(PHILO)
 
 $(PHILO): $(PHILO_OBJS)
-		$(CC) $(CFLAGS) $(INC_PATH) main.c  -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INC_PATH) main.c  -o $@ $^ $(LDFLAGS)
 
 %.o: %.c $(PHILO_INCS)
 	@$(CC) $(CFLAGS) $(INC_PATH) -c -o $@ $<
@@ -47,7 +47,7 @@ test_run: test
 	@../run_norminette.sh
 
 test_integration: $(PHILO)
-	./tests/integration_test.py
+	python3 ./tests/integration_test.py
 
 test: $(PHILO_OBJS) $(TEST_FILES)
 	$(CC) $(TEST_CFLAGS) $(INC_PATH) $(PHILO_OBJS) $(TEST_FILES) -o $(TEST_NAME) $(LDFLAGS)

@@ -32,7 +32,7 @@ void	display_usage_message(void)
 void	display_action_message(long int time, t_philo *philo, t_action action)
 {
 	static t_bool		death = FALSE;
-	const t_time_ms		wait_time = {.value = 0.0001};
+	const t_time_ms		wait_time = {.value = 1};
 	static const char	*action_str[5] = {
 												"is eating         🍝",
 												"is sleeping       💤",

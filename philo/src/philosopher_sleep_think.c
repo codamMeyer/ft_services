@@ -24,14 +24,12 @@ static t_sleep_config	create_sleep_config(const t_philo *philo)
 {
 	const unsigned int	wakeup_time = get_wakeup_time(philo);
 	const unsigned int	starvation_time = get_starvation_time(philo);
-	const uint64_t		time_to_sleep = philo->config->time_to_sleep.value;
+	const t_time_ms		timestamp = \
+						get_timestamp_diff(philo->config->time_start);
 	t_sleep_config		sleep_config;
 
 	sleep_config.will_die = wakeup_time > starvation_time;
-	sleep_config.time_to_sleep.value = time_to_sleep - \
-										(wakeup_time - time_to_sleep);
-	if ((int)sleep_config.time_to_sleep.value < 0)
-		sleep_config.time_to_sleep.value = 0;
+	sleep_config.time_to_sleep.value = starvation_time - timestamp.value;
 	return (sleep_config);
 }
 
