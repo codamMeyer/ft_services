@@ -15,6 +15,8 @@ RUN_COMMAND = "./philo {}"
 EXPECT_OK = "Expect ok"
 EXPECT_ERROR = "Expect Error"
 EXPECT_DEATH = "Expect Death"
+RESULT_OK = "{}[OK]{}".format(LIGHT_GREEN, RESET)
+RESULT_FAIL = "{}[FAIL]{}".format(LIGHT_RED, RESET)
 
 class Status(IntEnum):
     OK = 0
@@ -30,6 +32,16 @@ class Status(IntEnum):
         else:
             print(EXPECT_ERROR)
 
+    @classmethod
+    def printResult(cls, result, testName=""):
+        if (result):
+            print("\n{}{}{}".format(LIGHT_YELLOW, testName, RESET), end=" ")
+            print(RESULT_OK)
+        else:
+            print("\n{}{}{}".format(LIGHT_YELLOW, testName, RESET), end=" ")
+            print(RESULT_FAIL)
+
+
 def printTestBanner(testName):
     print("{}======================================================================{}".format(LIGHT_PURPLE, LIGHT_WHITE))
     print("                          {}".format(testName))
@@ -44,7 +56,7 @@ class ErrorManagement:
     def _runInput(self, testName, inp):
         print("\n{}Test case: {}{}: ./philo {}{}".format(LIGHT_PURPLE, LIGHT_YELLOW, testName, inp, RESET))
         ret = subprocess.run(RUN_COMMAND.format(inp), shell=True)
-        assert ret.returncode == int(Status.ERROR)
+        Status.printResult(ret.returncode == int(Status.ERROR), testName)
 
     def _testInvalidParameters(self):
         self._runInput("Non numeric parameters", "4 A 200 85")
@@ -68,8 +80,7 @@ class DeadlyParameters:
     def _runInput(self, testName, inp):
         print("\n{}Test case: {}./philo {}".format(LIGHT_PURPLE, RESET, inp))
         ret = subprocess.run(RUN_COMMAND.format(inp), shell=True)
-        print("\n\t{}{}{}\n".format(LIGHT_YELLOW, testName, RESET))
-        assert ret.returncode == int(Status.DEATH)
+        Status.printResult(ret.returncode == int(Status.DEATH), testName)
 
     def _testDeathDetection(self):
         self._runInput("Philo should die arround 310ms", "4 310 200 100")
@@ -89,8 +100,7 @@ class GoodParameters:
     def _runInput(self, testName, inp):
         print("\n{}Test case: {}./philo {}".format(LIGHT_PURPLE, RESET, inp))
         ret = subprocess.run(RUN_COMMAND.format(inp), shell=True)
-        print("\n\t{}{}{}\n".format(LIGHT_YELLOW, testName, RESET))
-        assert ret.returncode == int(Status.OK)
+        Status.printResult(ret.returncode == int(Status.OK), testName)
 
     def _testWithMinMeals(self):
         self._runInput("No philosopher should die", "4 410 200 200 10")
