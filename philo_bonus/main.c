@@ -5,6 +5,7 @@
 #include <display.h>
 #include <semaphore.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 t_bool	create_forks_semaphore(int num_forks)
 {
@@ -45,7 +46,7 @@ int	main(int argc, const char *argv[])
 	}
 	if (optional.config.number_of_philosophers < 2)
 	{
-		printf("Invalid Number of Philosophers\n");
+		write(STDERR_FILENO, "Invalid Number of Philosophers\n", 31);
 		return (ERROR);
 	}
 	if (!create_semaphore(optional.config.number_of_philosophers))

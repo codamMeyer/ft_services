@@ -12,20 +12,23 @@ static t_bool	ft_isdigit(char c)
 static t_optional_int	parse_number(const char *nbr)
 {
 	int				i;
+	long long int	long_number;
 	t_optional_int	number;
 
 	number.value = 0;
+	long_number = 0;
 	number.initialized = TRUE;
 	i = 0;
 	if (!ft_isdigit(nbr[i]))
 		number.initialized = FALSE;
 	while (ft_isdigit(nbr[i]))
 	{
-		number.value = (nbr[i] - '0') + (number.value * 10);
+		long_number = (nbr[i] - '0') + (long_number * 10);
 		++i;
 	}
-	if (nbr[i] != '\0')
+	if (nbr[i] != '\0' || long_number > INT_MAX)
 		number.initialized = FALSE;
+	number.value = (int)long_number;
 	return (number);
 }
 

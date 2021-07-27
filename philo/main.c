@@ -2,6 +2,7 @@
 #include <display.h>
 #include <parser.h>
 #include <dinner.h>
+#include <unistd.h>
 
 int	main(int argc, const char *argv[])
 {
@@ -16,7 +17,7 @@ int	main(int argc, const char *argv[])
 	}
 	if (optional.config.number_of_philosophers < 2)
 	{
-		printf("Invalid Number of Philosophers\n");
+		write(STDERR_FILENO, "Invalid Number of Philosophers\n", 31);
 		return (ERROR);
 	}
 	ret = run(&optional.config);
